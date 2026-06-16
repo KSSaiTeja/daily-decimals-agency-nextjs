@@ -1,0 +1,124 @@
+.preloader-overlay {
+  --preloader-bg: var(--color-surface, #f0f0f0);
+  --preloader-text: var(--color-brand, #ff4d00);
+  --preloader-word-size: clamp(1.85rem, 5.5vw, 3.25rem);
+  --preloader-word-line: calc(var(--preloader-word-size) * 1.35);
+  --preloader-counter-size: clamp(2.5rem, 7vw, 4.5rem);
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100dvh;
+  background-color: var(--preloader-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.preloader-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+  width: min(90vw, 28rem);
+  min-height: var(--preloader-word-line);
+}
+
+.preloader-word-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: min(90vw, 28rem);
+  min-height: var(--preloader-word-line);
+  will-change: transform, opacity;
+}
+
+.preloader-logo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.preloader-greeting {
+  display: block;
+  font-size: var(--preloader-word-size);
+  line-height: 1;
+  color: var(--preloader-text);
+  text-align: center;
+  white-space: nowrap;
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.preloader-tone-condensed {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.preloader-tone-editorial {
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+.preloader-tone-parisian {
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.preloader-tone-block {
+  font-weight: 400;
+  letter-spacing: -0.1em;
+  text-transform: uppercase;
+}
+
+.preloader-tone-futurist {
+  font-weight: 800;
+  letter-spacing: -0.14em;
+  text-transform: uppercase;
+}
+
+.preloader-tone-script {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.preloader-tone-serif {
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.preloader-counter {
+  position: absolute;
+  right: clamp(1.25rem, 4vw, 3rem);
+  bottom: clamp(1.25rem, 4vw, 3rem);
+  will-change: opacity;
+}
+
+.preloader-counter-text {
+  font-size: var(--preloader-counter-size);
+  line-height: 1;
+  color: var(--preloader-text);
+  font-variant-numeric: tabular-nums;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.preloader-tone-counter {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+body.preloader-active {
+  overflow: hidden;
+}

@@ -74,7 +74,7 @@ type HeroCardStackDeckProps = {
   className?: string;
 };
 
-/** 3D GSAP card cycle — ported from dd-code-demo. */
+/** 3D GSAP card cycle for the hero image deck. */
 export function HeroCardStackDeck({ className = "" }: HeroCardStackDeckProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const deckRef = useRef<HTMLDivElement>(null);

@@ -12,8 +12,7 @@ type BrandLogoProps = {
 };
 
 /**
- * Daily Decimals wordmark — crops `logo-primary.png` to the header viewport
- * (same positioning as dd-code-demo `site-header.tsx`).
+ * Daily Decimals wordmark — crops `logo-primary.png` to the header viewport.
  */
 export function BrandLogo({
   width,

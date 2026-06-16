@@ -26,7 +26,7 @@ const pillShadow =
   "pointer-events-none absolute inset-0 -z-10 rounded-full shadow-[0_12px_36px_rgba(0,0,0,0.2),0_4px_14px_rgba(0,0,0,0.14)] transition-[box-shadow] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/pill:shadow-[0_16px_44px_rgba(0,0,0,0.23),0_6px_18px_rgba(0,0,0,0.17)]";
 
 const pillShell =
-  "relative flex h-12 w-full items-center gap-0.5 overflow-hidden rounded-full border border-white/[0.14] bg-[rgba(4,4,4,0.94)] px-1 py-0.5 backdrop-blur-2xl backdrop-saturate-150 before:pointer-events-none before:absolute before:inset-x-6 before:top-0 before:z-[1] before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent sm:h-[3.25rem] sm:w-max sm:gap-1.5 sm:px-1.5 lg:transition-[border-color] lg:duration-[900ms] lg:ease-[cubic-bezier(0.22,1,0.36,1)] lg:group-hover/pill:border-white/22";
+  "relative flex h-12 w-full items-center gap-0.5 overflow-hidden rounded-full border border-white/[0.14] bg-[rgba(4,4,4,0.82)] px-1 py-0.5 backdrop-blur-2xl backdrop-saturate-150 before:pointer-events-none before:absolute before:inset-x-6 before:top-0 before:z-[1] before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent sm:h-[3.25rem] sm:w-max sm:gap-1.5 sm:px-1.5 lg:transition-[border-color] lg:duration-[900ms] lg:ease-[cubic-bezier(0.22,1,0.36,1)] lg:group-hover/pill:border-white/22";
 
 const linksScroll =
   "min-w-0 flex-1 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [-ms-overflow-style:none] sm:flex-none sm:overflow-visible [&::-webkit-scrollbar]:hidden";

@@ -1,2 +1,2 @@
-export { Preloader, PreloaderGate } from "./Preloader";
+export { PreloaderGate } from "./Preloader";
 export { usePreloaderReady } from "./PreloaderReadyContext";

@@ -17,7 +17,7 @@ function HeroHeader() {
     <header
       ref={ref}
       id="top"
-      className="flex shrink-0 items-center justify-between px-[var(--page-gutter)] pb-2 pt-[calc(2.125rem+env(safe-area-inset-top,0px))] sm:pb-3 sm:pt-[calc(2.375rem+env(safe-area-inset-top,0px))] md:pt-[calc(2.5rem+env(safe-area-inset-top,0px))] lg:pb-5 lg:pt-[calc(2.75rem+env(safe-area-inset-top,0px))]"
+      className="mx-auto flex w-full max-w-[90rem] shrink-0 items-center justify-between px-[var(--page-gutter)] pb-2 pt-[calc(2.125rem+env(safe-area-inset-top,0px))] sm:pb-3 sm:pt-[calc(2.375rem+env(safe-area-inset-top,0px))] md:pt-[calc(2.5rem+env(safe-area-inset-top,0px))] lg:pb-5 lg:pt-[calc(2.75rem+env(safe-area-inset-top,0px))]"
       data-name="Header"
       style={{ opacity: 0 }}
     >
@@ -52,7 +52,7 @@ function HeroHeader() {
 export function HeroSection() {
   return (
     <section
-      className="hero relative z-10 flex min-h-[100svh] w-full flex-col overflow-x-clip bg-surface lg:overflow-x-visible"
+      className="hero relative z-10 flex min-h-[100svh] w-full flex-col overflow-x-clip overflow-y-visible bg-surface lg:overflow-x-visible"
       aria-label="Hero"
     >
       <HeroStatusNotch />
@@ -65,11 +65,11 @@ export function HeroSection() {
         </div>
 
         <div className="hero-content order-2 -mt-5 flex min-w-0 shrink-0 flex-col sm:mt-0 lg:order-1 lg:col-start-1 lg:row-start-1 lg:mt-0 lg:h-full lg:shrink lg:justify-end lg:pb-6 lg:pr-0 xl:pb-8">
-          <div className="flex flex-col items-start gap-3 sm:gap-5 lg:gap-8">
+          <div className="flex flex-col items-start gap-3 sm:gap-5 lg:gap-9 xl:gap-10">
             <HeroFounderTrust />
             <HeroHeadline />
           </div>
-          <div className="mt-3 w-full min-w-0 sm:mt-5 lg:mt-14 xl:mt-16">
+          <div className="mt-6 w-full min-w-0 sm:mt-8 lg:mt-16 xl:mt-20">
             <HeroPartnerMarquee />
           </div>
         </div>

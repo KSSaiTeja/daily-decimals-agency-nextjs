@@ -5,7 +5,7 @@ import { heroGenerationO } from "@/lib/images/urls";
 import { useRef } from "react";
 
 const headlineSize =
-  "text-[clamp(1.65rem,7.4vw,3.25rem)] leading-[1.02] lg:text-[3.75rem] xl:text-[4.125rem]";
+  "text-[clamp(1.65rem,7.4vw,3.25rem)] leading-[1.02] lg:text-[4rem] xl:text-[4.375rem]";
 
 export function HeroHeadline() {
   const ref = useRef<HTMLDivElement>(null);

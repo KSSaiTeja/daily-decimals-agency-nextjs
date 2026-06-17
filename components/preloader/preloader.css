@@ -8,7 +8,7 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
-  width: 100vw;
+  width: 100%;
   height: 100dvh;
   background-color: var(--preloader-bg);
   -webkit-font-smoothing: antialiased;

@@ -1,24 +1,13 @@
 "use client";
 
-import { BrandLogo } from "@/components/brand";
+import { HeroPartnerLogo } from "@/components/hero/hero-partner-logo";
+import { PARTNER_LOGOS } from "@/components/hero/partner-logos-data";
 import { usePreloaderReady } from "@/components/preloader";
 import gsap from "gsap";
 import { useLayoutEffect, useRef } from "react";
 
-const MARQUEE_LOGO_COUNT = 8;
 const PX_PER_SECOND = 52;
 const LOGO_GAP = "1.75rem";
-
-function MarqueeLogo() {
-  return (
-    <div className="flex shrink-0 items-center">
-      <BrandLogo
-        alt=""
-        className="h-10 w-[7.25rem] opacity-85 sm:h-11 sm:w-32 md:h-12 md:w-[8.75rem] lg:h-[3.25rem] lg:w-[9.25rem]"
-      />
-    </div>
-  );
-}
 
 export function HeroPartnerMarquee() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -61,8 +50,8 @@ export function HeroPartnerMarquee() {
     };
   }, [ready]);
 
-  const logos = Array.from({ length: MARQUEE_LOGO_COUNT }, (_, index) => (
-    <MarqueeLogo key={index} />
+  const logos = PARTNER_LOGOS.map((partner) => (
+    <HeroPartnerLogo key={partner.src} partner={partner} />
   ));
   const setClass = "flex shrink-0 flex-nowrap items-center";
   const setStyle = { gap: LOGO_GAP } as const;

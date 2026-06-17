@@ -19,7 +19,7 @@ const COMPACT_NAV_LABELS: Record<string, string> = {
 };
 
 const pillLift =
-  "group/pill relative w-full max-w-[calc(100vw-1.5rem)] sm:w-max sm:max-w-none will-change-transform transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:hover:-translate-y-1";
+  "group/pill relative w-full max-w-[min(100%,calc(100vw-1.5rem))] sm:w-max sm:max-w-none will-change-transform transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:hover:-translate-y-1";
 
 /** ~30% of prior shadow strength — soft ambient lift only. */
 const pillShadow =
@@ -226,11 +226,11 @@ export function SiteBottomNav() {
     <nav
       aria-label="Primary"
       data-site-bottom-nav
-      className={`pointer-events-none fixed inset-x-0 bottom-0 z-[100] flex justify-center overflow-visible px-3 pt-8 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
+      className={`pointer-events-none fixed bottom-0 left-1/2 z-[100] w-full max-w-[100vw] -translate-x-1/2 px-3 pt-8 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
         visible ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
       }`}
     >
-      <div className={`pointer-events-auto ${pillLift}`}>
+      <div className={`pointer-events-auto mx-auto ${pillLift}`}>
         <div aria-hidden className={pillShadow} />
 
         <div

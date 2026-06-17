@@ -169,7 +169,7 @@
   --ribbon-edge-fade: clamp(2rem, 5vw, 4.5rem);
   --ribbon-rotation-stats: -5;
   --ribbon-rotation-services: 5;
-  --ribbon-track-width: max(220vw, 90rem);
+  --ribbon-track-width: min(max(220vw, 90rem), 220vw);
   /*
    * Rotating a ~220vw-wide strip: vertical bleed ≈ (trackWidth/2) × sin(θ).
    * Use 110vw × sin(θ) with precomputed coefficients (no CSS sin() dependency).
@@ -181,7 +181,9 @@
   position: relative;
   z-index: 5;
   width: 100%;
-  overflow: visible;
+  max-width: 100%;
+  overflow-x: clip;
+  overflow-y: visible;
   margin-top: 0;
   padding-top: clamp(1.5rem, 4vh, 3rem);
   padding-bottom: clamp(2.5rem, 5vh, 4rem);
@@ -189,7 +191,7 @@
 
 .ribbon-stage {
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   height: var(--ribbon-section-height);
 }
 
@@ -231,6 +233,8 @@
   position: relative;
   z-index: 4;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   padding-bottom: clamp(3.5rem, 8vh, 8.75rem);
 }
 
@@ -532,6 +536,8 @@
   position: relative;
   z-index: 3;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   padding-top: clamp(1.5rem, 4vh, 3rem);
   padding-bottom: clamp(3.5rem, 8vh, 8.75rem);
 }
@@ -691,12 +697,15 @@
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   padding-bottom: clamp(1.5rem, 4vh, 3rem);
 }
 
 .funnel-sticky-viewport {
   display: flex;
   width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
   align-items: center;
@@ -717,6 +726,8 @@
   --funnel-strip-step: clamp(1.25rem, 2.8vw, 2.625rem);
   --funnel-strip-gap: clamp(0.375rem, 0.8vw, 0.625rem);
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .funnel-section__intro {
@@ -877,6 +888,7 @@
 
 @media (max-width: 1023px) {
   .funnel-sticky-viewport {
+    min-height: auto;
     align-items: stretch;
     justify-content: flex-start;
     padding-top: clamp(0.5rem, 1.5vh, 1rem);
@@ -885,6 +897,7 @@
   }
 
   .funnel-sticky-viewport[data-funnel-pinned] {
+    min-height: 100dvh;
     padding-top: clamp(0.75rem, 2vh, 1.25rem);
   }
 
@@ -950,7 +963,6 @@
   [data-process-footnote-star],
   [data-process-footnote-text] {
     opacity: 0;
-    visibility: hidden;
   }
 }
 
@@ -960,7 +972,8 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  overflow: visible;
+  max-width: 100%;
+  overflow-x: clip;
   padding-top: clamp(1.5rem, 4vh, 3rem);
   padding-bottom: clamp(3.5rem, 8vh, 8.75rem);
 }
@@ -1004,7 +1017,10 @@
 
 .services-tabs__scroll {
   width: 100%;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .services-tabs__track {
@@ -1364,6 +1380,8 @@
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   padding-top: clamp(1.5rem, 4vh, 3rem);
   padding-bottom: clamp(3.5rem, 8vh, 8.75rem);
 }
@@ -1381,6 +1399,8 @@
 .advantages-bento {
   display: grid;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   gap: clamp(0.625rem, 1.2vw, 0.875rem);
   grid-template-columns: minmax(0, 1fr);
 }
@@ -1627,6 +1647,7 @@
   min-height: clamp(18rem, 52vw, 24rem);
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
   background: linear-gradient(
     4.95deg,
     rgb(18, 46, 50) 0%,
@@ -1901,6 +1922,10 @@
 
 html {
   scroll-behavior: auto;
+  overflow-x: hidden;
+  max-width: 100%;
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
 }
 
 body {
@@ -1909,8 +1934,31 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
-  overflow-x: clip;
+  overflow-x: hidden;
+  max-width: 100%;
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
   padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.site-shell {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  isolation: isolate;
+}
+
+/* GSAP pin wrappers — never widen the document */
+.pin-spacer {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.funnel-pin-track,
+.process-pin-track {
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 @media (min-width: 640px) {
@@ -1925,7 +1973,8 @@ body {
   position: relative;
   z-index: 4;
   width: 100%;
-  overflow: visible;
+  max-width: 100%;
+  overflow-x: clip;
   --process-cards-min: clamp(32rem, 70vh, 46rem);
   --process-cards-gap: clamp(1.75rem, 4.5vw, 2.5rem);
   --process-icon-aspect: 512 / 115;
@@ -1943,9 +1992,10 @@ body {
 .process-sticky-viewport {
   display: flex;
   width: 100%;
+  max-width: 100%;
   height: 100vh;
   height: 100dvh;
-  overflow: visible;
+  overflow-x: clip;
   will-change: transform;
 }
 
@@ -2350,6 +2400,8 @@ body {
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   padding-top: clamp(1.5rem, 4vh, 3rem);
   padding-bottom: clamp(3.5rem, 8vh, 8.75rem);
 }
@@ -2370,6 +2422,8 @@ body {
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   padding-top: clamp(1.5rem, 4vh, 3rem);
   padding-bottom: clamp(3.5rem, 8vh, 8.75rem);
 }
@@ -2666,6 +2720,8 @@ body {
   position: relative;
   z-index: 2;
   width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   padding-top: clamp(0.5rem, 2vh, 1.5rem);
   /* Clearance for fixed bottom nav only */
   padding-bottom: clamp(4.75rem, 7vh, 5.5rem);

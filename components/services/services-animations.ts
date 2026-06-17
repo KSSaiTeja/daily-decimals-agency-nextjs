@@ -2,6 +2,7 @@
 
 import gsap from "gsap";
 import { splitTitleLines } from "@/lib/animation/split-chars";
+import { observeSectionReveal } from "@/lib/animation/section-reveal";
 import { usePreloaderReady } from "@/components/preloader";
 import { useLayoutEffect, useRef } from "react";
 
@@ -10,8 +11,6 @@ const MOTION = {
   easeSecondary: "power3.out",
 } as const;
 
-const REVEAL_VISIBLE_RATIO = 0.2;
-const REVEAL_ROOT_MARGIN = "-10% 0px -16% 0px";
 const MOBILE_MARQUEE_QUERY = "(max-width: 767px)";
 
 function prefersReducedMotion() {
@@ -20,15 +19,6 @@ function prefersReducedMotion() {
 
 function isMobileMarqueeHidden() {
   return window.matchMedia(MOBILE_MARQUEE_QUERY).matches;
-}
-
-function shouldReveal(entry: IntersectionObserverEntry) {
-  if (!entry.isIntersecting) return false;
-  if (entry.intersectionRatio < REVEAL_VISIBLE_RATIO) return false;
-
-  const rect = entry.boundingClientRect;
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return rect.top <= vh * 0.72 && rect.bottom >= vh * 0.32;
 }
 
 type UseServicesSectionAnimationsOptions = {
@@ -48,7 +38,7 @@ export function useServicesSectionAnimations({
     const section = sectionRef.current;
     if (!section || !ready) return;
 
-    let observer: IntersectionObserver | null = null;
+    let disconnectReveal: (() => void) | null = null;
 
     const ctx = gsap.context(() => {
       const chars = splitTitleLines(
@@ -97,14 +87,6 @@ export function useServicesSectionAnimations({
           ease: "sine.inOut",
           repeat: -1,
         });
-      };
-
-      const evaluateViewport = () => {
-        if (hasPlayedRef.current) return;
-        const rect = section.getBoundingClientRect();
-        const vh = window.innerHeight || document.documentElement.clientHeight;
-        const inBand = rect.top <= vh * 0.72 && rect.bottom >= vh * 0.32;
-        if (inBand) playReveal();
       };
 
       const playReveal = () => {
@@ -186,21 +168,12 @@ export function useServicesSectionAnimations({
         startMarquee();
       }
 
-      observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (shouldReveal(entry)) {
-              playReveal();
-              observer?.disconnect();
-              break;
-            }
-          }
-        },
-        { threshold: [0, REVEAL_VISIBLE_RATIO, 0.35], rootMargin: REVEAL_ROOT_MARGIN },
-      );
-
-      observer.observe(section);
-      evaluateViewport();
+      disconnectReveal = observeSectionReveal({
+        target: section,
+        onReveal: playReveal,
+        hasRevealed: () => hasPlayedRef.current,
+        bottomGate: 0.08,
+      });
 
       const syncMarquee = () => {
         if (isMobileMarqueeHidden()) {
@@ -212,23 +185,33 @@ export function useServicesSectionAnimations({
         if (marqueeTrack) startMarquee();
       };
 
-      const onScrollOrResize = () => {
-        evaluateViewport();
+      const onScroll = () => {
         syncMarquee();
       };
-      window.addEventListener("scroll", onScrollOrResize, { passive: true });
-      window.addEventListener("resize", onScrollOrResize);
+
+      let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+      const onResize = () => {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          syncMarquee();
+          resizeTimer = null;
+        }, 200);
+      };
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onResize);
 
       return () => {
-        observer?.disconnect();
-        window.removeEventListener("scroll", onScrollOrResize);
-        window.removeEventListener("resize", onScrollOrResize);
+        disconnectReveal?.();
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onResize);
+        if (resizeTimer) clearTimeout(resizeTimer);
         marqueeTweenRef.current?.kill();
       };
     }, section);
 
     return () => {
-      observer?.disconnect();
+      disconnectReveal?.();
       marqueeTweenRef.current?.kill();
       ctx.revert();
     };

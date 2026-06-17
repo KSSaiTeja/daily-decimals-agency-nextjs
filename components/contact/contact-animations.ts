@@ -1,6 +1,7 @@
 "use client";
 
 import gsap from "gsap";
+import { observeSectionReveal } from "@/lib/animation/section-reveal";
 import { usePreloaderReady } from "@/components/preloader";
 import { useLayoutEffect, useRef, useState } from "react";
 
@@ -8,7 +9,6 @@ const MOTION = {
   ease: "power2.out",
 } as const;
 
-const REVEAL_VISIBLE_RATIO = 0.12;
 const REVEAL_ROOT_MARGIN = "-8% 0px -12% 0px";
 
 const REVEAL_FROM = {
@@ -27,15 +27,6 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function shouldReveal(entry: IntersectionObserverEntry) {
-  if (!entry.isIntersecting) return false;
-  if (entry.intersectionRatio < REVEAL_VISIBLE_RATIO) return false;
-
-  const rect = entry.boundingClientRect;
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return rect.top <= vh * 0.78 && rect.bottom >= vh * 0.15;
-}
-
 export function useContactSectionAnimations() {
   const sectionRef = useRef<HTMLElement>(null);
   const ready = usePreloaderReady();
@@ -46,7 +37,7 @@ export function useContactSectionAnimations() {
     const section = sectionRef.current;
     if (!section || !ready) return;
 
-    let observer: IntersectionObserver | null = null;
+    let disconnectReveal: (() => void) | null = null;
 
     const ctx = gsap.context(() => {
       const revealTarget =
@@ -66,8 +57,6 @@ export function useContactSectionAnimations() {
       const runTimeline = () => {
         if (hasPlayedRef.current) return;
         hasPlayedRef.current = true;
-        observer?.disconnect();
-        observer = null;
 
         gsap
           .timeline({
@@ -82,39 +71,16 @@ export function useContactSectionAnimations() {
           .to(revealItems, { ...REVEAL_TO, stagger: 0.09 }, 0);
       };
 
-      observer = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          if (!entry || !shouldReveal(entry)) return;
-          runTimeline();
-        },
-        {
-          root: null,
-          rootMargin: REVEAL_ROOT_MARGIN,
-          threshold: [0, 0.06, REVEAL_VISIBLE_RATIO, 0.2, 0.35],
-        },
-      );
-
-      observer.observe(revealTarget);
-
-      requestAnimationFrame(() => {
-        const rect = revealTarget.getBoundingClientRect();
-        const vh = window.innerHeight || document.documentElement.clientHeight;
-        const inView =
-          rect.top <= vh * 0.78 &&
-          rect.bottom >= vh * 0.15 &&
-          rect.height > 0 &&
-          rect.bottom > 0 &&
-          rect.top < vh;
-
-        if (inView) {
-          runTimeline();
-        }
+      disconnectReveal = observeSectionReveal({
+        target: revealTarget,
+        onReveal: runTimeline,
+        hasRevealed: () => hasPlayedRef.current,
+        rootMargin: REVEAL_ROOT_MARGIN,
       });
     }, section);
 
     return () => {
-      observer?.disconnect();
+      disconnectReveal?.();
       ctx.revert();
       setEmailMarqueeActive(false);
     };

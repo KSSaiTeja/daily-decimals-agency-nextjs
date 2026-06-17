@@ -1,6 +1,7 @@
 "use client";
 
 import gsap from "gsap";
+import { observeSectionReveal } from "@/lib/animation/section-reveal";
 import { usePreloaderReady } from "@/components/preloader";
 import { useLayoutEffect, useRef } from "react";
 
@@ -27,15 +28,6 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function shouldReveal(entry: IntersectionObserverEntry) {
-  if (!entry.isIntersecting) return false;
-  if (entry.intersectionRatio < REVEAL_VISIBLE_RATIO) return false;
-
-  const rect = entry.boundingClientRect;
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return rect.bottom > 0 && rect.top < vh;
-}
-
 export function useFooterSectionAnimations() {
   const sectionRef = useRef<HTMLElement>(null);
   const ready = usePreloaderReady();
@@ -45,8 +37,7 @@ export function useFooterSectionAnimations() {
     const section = sectionRef.current;
     if (!section || !ready) return;
 
-    let observer: IntersectionObserver | null = null;
-    let failSafeId: number | null = null;
+    let disconnectReveal: (() => void) | null = null;
 
     const ctx = gsap.context(() => {
       const revealItems = section.querySelectorAll<HTMLElement>("[data-footer-animate]");
@@ -63,8 +54,6 @@ export function useFooterSectionAnimations() {
       const runTimeline = () => {
         if (hasPlayedRef.current) return;
         hasPlayedRef.current = true;
-        observer?.disconnect();
-        observer = null;
 
         gsap
           .timeline({
@@ -78,42 +67,28 @@ export function useFooterSectionAnimations() {
           .to(revealItems, { ...REVEAL_TO, stagger: 0.11 }, 0);
       };
 
-      observer = new IntersectionObserver(
-        (entries) => {
-          const entry = entries[0];
-          if (!entry || !shouldReveal(entry)) return;
-          runTimeline();
-        },
-        {
-          root: null,
-          rootMargin: REVEAL_ROOT_MARGIN,
-          threshold: [0, 0.06, REVEAL_VISIBLE_RATIO, 0.2, 0.35],
-        },
-      );
-
-      observer.observe(section);
-
-      requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect();
-        const vh = window.innerHeight || document.documentElement.clientHeight;
-        const inView = rect.bottom > 0 && rect.top < vh && rect.height > 0;
-
-        if (inView) {
-          runTimeline();
-        }
+      disconnectReveal = observeSectionReveal({
+        target: section,
+        onReveal: runTimeline,
+        hasRevealed: () => hasPlayedRef.current,
+        rootMargin: REVEAL_ROOT_MARGIN,
+        minVisibleRatio: 0.04,
       });
 
-      failSafeId = window.setTimeout(() => {
+      const failSafeId = window.setTimeout(() => {
         if (!hasPlayedRef.current) {
           gsap.set(revealItems, REVEAL_TO);
           hasPlayedRef.current = true;
         }
       }, 2500);
+
+      return () => {
+        window.clearTimeout(failSafeId);
+      };
     }, section);
 
     return () => {
-      observer?.disconnect();
-      if (failSafeId !== null) window.clearTimeout(failSafeId);
+      disconnectReveal?.();
       ctx.revert();
     };
   }, [ready]);

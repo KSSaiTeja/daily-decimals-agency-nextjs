@@ -3,6 +3,11 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { splitTitleLines } from "@/lib/animation/split-chars";
+import { observeSectionReveal } from "@/lib/animation/section-reveal";
+import {
+  configureScrollTrigger,
+  refreshScrollTriggersAfterLayout,
+} from "@/lib/animation/scroll-trigger-config";
 import { usePreloaderReady } from "@/components/preloader";
 import {
   PROCESS_CARDS_ARTBOARD_WIDTH,
@@ -11,12 +16,13 @@ import {
 } from "@/components/process/process-layout";
 import { useLayoutEffect, type RefObject } from "react";
 
-gsap.registerPlugin(ScrollTrigger);
+configureScrollTrigger();
 
 const PIN_VIEWPORT_MULTIPLIER = 3.1;
 const DESKTOP_PIN_QUERY = "(min-width: 1024px)";
 const REVEAL_VISIBLE_RATIO = 0.2;
 const REVEAL_ROOT_MARGIN = "-10% 0px -16% 0px";
+const RESIZE_DEBOUNCE_MS = 220;
 
 const MOTION = {
   easePrimary: "power4.out",
@@ -213,9 +219,11 @@ export function useProcessSectionAnimations({
 
     let pinTrigger: ScrollTrigger | null = null;
     let introTrigger: ScrollTrigger | null = null;
-    let mobileObserver: IntersectionObserver | null = null;
+    let disconnectReveal: (() => void) | null = null;
     let hasInteracted = false;
+    let hasTextRevealed = false;
     let textRevealTl: gsap.core.Timeline | null = null;
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
     const ctx = gsap.context(() => {
       const eyebrow = section.querySelector<HTMLElement>("[data-process-eyebrow]");
@@ -278,7 +286,8 @@ export function useProcessSectionAnimations({
       };
 
       const revealTextOnInteraction = () => {
-        if (hasInteracted) return;
+        if (hasTextRevealed) return;
+        hasTextRevealed = true;
         hasInteracted = true;
 
         textRevealTl?.kill();
@@ -424,7 +433,7 @@ export function useProcessSectionAnimations({
           if (!isDesktopPinLayout()) return;
           syncViewportFit(section);
           applyProgress(pinTrigger?.progress ?? 0);
-          ScrollTrigger.refresh();
+          refreshScrollTriggersAfterLayout();
         };
 
         void preloadProcessCardImages(section).then(reflowAfterImages);
@@ -433,26 +442,26 @@ export function useProcessSectionAnimations({
       const setupMobileReveal = () => {
         introTrigger?.kill();
         pinTrigger?.kill();
-        mobileObserver?.disconnect();
         clearViewportFit(section);
 
-        setInitialState();
+        if (!hasTextRevealed) {
+          setInitialState();
+        }
+      };
 
-        mobileObserver = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (shouldReveal(entry)) {
-                revealTextOnInteraction();
-                revealMobileCards();
-                mobileObserver?.disconnect();
-                break;
-              }
+      const setupTextReveal = () => {
+        disconnectReveal?.();
+        disconnectReveal = observeSectionReveal({
+          target: section,
+          onReveal: () => {
+            revealTextOnInteraction();
+            if (!isDesktopPinLayout()) {
+              revealMobileCards();
             }
           },
-          { threshold: [0, REVEAL_VISIBLE_RATIO, 0.35], rootMargin: REVEAL_ROOT_MARGIN },
-        );
-
-        mobileObserver.observe(section);
+          hasRevealed: () => hasTextRevealed,
+          rootMargin: REVEAL_ROOT_MARGIN,
+        });
       };
 
       const setup = () => {
@@ -472,27 +481,26 @@ export function useProcessSectionAnimations({
           setupMobileReveal();
         }
 
-        ScrollTrigger.refresh();
+        setupTextReveal();
+        refreshScrollTriggersAfterLayout();
       };
 
       setup();
 
       const onResize = () => {
-        const wasDesktop = pinTrigger !== null;
-        const isDesktop = isDesktopPinLayout();
-
-        if (wasDesktop !== isDesktop) {
-          hasInteracted = false;
-        }
-
-        setup();
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          setup();
+          resizeTimer = null;
+        }, RESIZE_DEBOUNCE_MS);
       };
 
       window.addEventListener("resize", onResize);
 
       return () => {
         textRevealTl?.kill();
-        mobileObserver?.disconnect();
+        disconnectReveal?.();
+        if (resizeTimer) clearTimeout(resizeTimer);
         window.removeEventListener("resize", onResize);
         introTrigger?.kill();
         introTrigger = null;
@@ -504,7 +512,7 @@ export function useProcessSectionAnimations({
 
     return () => {
       textRevealTl?.kill();
-      mobileObserver?.disconnect();
+      disconnectReveal?.();
       introTrigger?.kill();
       pinTrigger?.kill();
       ctx.revert();

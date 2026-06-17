@@ -3,12 +3,17 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { splitTitleLines } from "@/lib/animation/split-chars";
+import {
+  configureScrollTrigger,
+  refreshScrollTriggersAfterLayout,
+} from "@/lib/animation/scroll-trigger-config";
+import { observeSectionReveal } from "@/lib/animation/section-reveal";
 import { usePreloaderReady } from "@/components/preloader";
 import { FUNNEL_STAGES } from "@/components/funnel/data";
 import { FUNNEL_COLORS } from "@/components/funnel/funnel-colors";
 import { useLayoutEffect, type RefObject } from "react";
 
-gsap.registerPlugin(ScrollTrigger);
+configureScrollTrigger();
 
 const STAGE_COUNT = FUNNEL_STAGES.length;
 const FADE_SPAN = 0.92;
@@ -23,9 +28,12 @@ const MOTION = {
 const SCRUB = {
   approach: 0.9,
   pin: 1.15,
+  approachMobile: 0.55,
+  pinMobile: 0.75,
 } as const;
 
-const REVEAL_VISIBLE_RATIO = 0.2;
+const RESIZE_DEBOUNCE_MS = 220;
+
 const REVEAL_ROOT_MARGIN = "-8% 0px -12% 0px";
 
 function prefersReducedMotion() {
@@ -37,7 +45,7 @@ function isMobilePinLayout() {
 }
 
 function getPinScrubDistance(viewportHeight: number) {
-  const multiplier = isMobilePinLayout() ? 3.45 : PIN_VIEWPORT_MULTIPLIER;
+  const multiplier = isMobilePinLayout() ? 2.85 : PIN_VIEWPORT_MULTIPLIER;
   return Math.round(multiplier * viewportHeight);
 }
 
@@ -83,15 +91,6 @@ function mixHex(from: string, to: string, amount: number) {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-function shouldReveal(entry: IntersectionObserverEntry) {
-  if (!entry.isIntersecting) return false;
-  if (entry.intersectionRatio < REVEAL_VISIBLE_RATIO) return false;
-
-  const rect = entry.boundingClientRect;
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return rect.top <= vh * 0.78 && rect.bottom >= vh * 0.12;
-}
-
 function applyFunnelProgress(
   strips: NodeListOf<HTMLElement>,
   contents: NodeListOf<HTMLElement>,
@@ -128,7 +127,7 @@ function applyFunnelProgress(
 
     gsap.set(strip, {
       scale: 1 + weight * 0.018,
-      x: weight * 6,
+      x: weight * 4,
       opacity: 0.55 + weight * 0.45,
     });
 
@@ -214,11 +213,13 @@ export function useFunnelSectionAnimations({ stickyRef }: FunnelAnimationRefs) {
 
     let pinTrigger: ScrollTrigger | null = null;
     let approachTrigger: ScrollTrigger | null = null;
-    let headerObserver: IntersectionObserver | null = null;
+    let disconnectHeaderReveal: (() => void) | null = null;
+    let stickyObserver: IntersectionObserver | null = null;
     let hasBodyInteracted = false;
     let hasHeaderRevealed = false;
     let headerIntroTl: gsap.core.Timeline | null = null;
     let releaseTween: gsap.core.Tween | null = null;
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
     const ctx = gsap.context(() => {
       const intro = section.querySelector<HTMLElement>("[data-funnel-intro]");
@@ -292,6 +293,19 @@ export function useFunnelSectionAnimations({ stickyRef }: FunnelAnimationRefs) {
         }
       };
 
+      const maybeRevealBodyInView = () => {
+        if (hasBodyInteracted) return;
+
+        const rect = sticky.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        const inApproachZone = rect.top <= vh * 0.92 && rect.bottom >= vh * 0.08;
+
+        if (inApproachZone) {
+          showBodyImmediately();
+          applyProgress(mapPinProgress(pinTrigger?.progress ?? approachTrigger?.progress ?? 0));
+        }
+      };
+
       const revealHeaderIntro = () => {
         if (hasHeaderRevealed) return;
         hasHeaderRevealed = true;
@@ -354,24 +368,17 @@ export function useFunnelSectionAnimations({ stickyRef }: FunnelAnimationRefs) {
       setInitialState();
 
       if (intro) {
-        headerObserver = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (shouldReveal(entry)) {
-                revealHeaderIntro();
-                headerObserver?.disconnect();
-                break;
-              }
-            }
-          },
-          { threshold: [0, REVEAL_VISIBLE_RATIO, 0.35], rootMargin: REVEAL_ROOT_MARGIN },
-        );
-        headerObserver.observe(intro);
+        disconnectHeaderReveal = observeSectionReveal({
+          target: intro,
+          onReveal: revealHeaderIntro,
+          hasRevealed: () => hasHeaderRevealed,
+          rootMargin: REVEAL_ROOT_MARGIN,
+        });
       }
 
       const setupScroll = () => {
         const previousProgress = pinTrigger?.progress ?? 0;
-        const wasActive = hasBodyInteracted || previousProgress > 0.001;
+        const wasActive = hasBodyInteracted || previousProgress > 0.001 || hasHeaderRevealed;
 
         approachTrigger?.kill();
         pinTrigger?.kill();
@@ -385,23 +392,19 @@ export function useFunnelSectionAnimations({ stickyRef }: FunnelAnimationRefs) {
         }
 
         const vh = window.innerHeight || document.documentElement.clientHeight;
+        const mobile = isMobilePinLayout();
 
         approachTrigger = ScrollTrigger.create({
           trigger: sticky,
           start: "top bottom",
           end: "top top",
-          scrub: SCRUB.approach,
+          scrub: mobile ? SCRUB.approachMobile : SCRUB.approach,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             applyApproachReveal(strips, contents, stickyInner, self.progress);
           },
           onLeave: () => {
-            hasBodyInteracted = true;
-            gsap.set(strips, { autoAlpha: 1, x: 0 });
-            if (stickyInner) gsap.set(stickyInner, { y: 0 });
-            if (contents[0]) {
-              gsap.set(contents[0], { autoAlpha: 1, y: 0, filter: "none" });
-            }
+            showBodyImmediately();
             applyProgress(0);
           },
           onEnterBack: () => {
@@ -415,9 +418,9 @@ export function useFunnelSectionAnimations({ stickyRef }: FunnelAnimationRefs) {
           end: () => `+=${getPinScrubDistance(vh)}`,
           pin: sticky,
           pinSpacing: true,
-          anticipatePin: 1.5,
+          anticipatePin: mobile ? 0 : 1.5,
           invalidateOnRefresh: true,
-          scrub: SCRUB.pin,
+          scrub: mobile ? SCRUB.pinMobile : SCRUB.pin,
           onUpdate: (self) => {
             setPinnedState(self.isActive);
 
@@ -454,18 +457,41 @@ export function useFunnelSectionAnimations({ stickyRef }: FunnelAnimationRefs) {
           applyProgress(mapPinProgress(pinTrigger.progress));
         }
 
-        ScrollTrigger.refresh();
+        refreshScrollTriggersAfterLayout();
       };
 
       setupScroll();
 
-      const onResize = () => setupScroll();
+      stickyObserver = new IntersectionObserver(
+        () => {
+          maybeRevealBodyInView();
+        },
+        { threshold: [0, 0.08, 0.2, 0.45], rootMargin: "0px 0px -6% 0px" },
+      );
+      stickyObserver.observe(sticky);
+
+      requestAnimationFrame(() => {
+        maybeRevealBodyInView();
+        refreshScrollTriggersAfterLayout();
+      });
+
+      const onResize = () => {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          setupScroll();
+          maybeRevealBodyInView();
+          resizeTimer = null;
+        }, RESIZE_DEBOUNCE_MS);
+      };
+
       window.addEventListener("resize", onResize);
 
       return () => {
         headerIntroTl?.kill();
         releaseTween?.kill();
-        headerObserver?.disconnect();
+        disconnectHeaderReveal?.();
+        stickyObserver?.disconnect();
+        if (resizeTimer) clearTimeout(resizeTimer);
         window.removeEventListener("resize", onResize);
         approachTrigger?.kill();
         approachTrigger = null;
@@ -478,7 +504,9 @@ export function useFunnelSectionAnimations({ stickyRef }: FunnelAnimationRefs) {
     return () => {
       headerIntroTl?.kill();
       releaseTween?.kill();
-      headerObserver?.disconnect();
+      disconnectHeaderReveal?.();
+      stickyObserver?.disconnect();
+      if (resizeTimer) clearTimeout(resizeTimer);
       approachTrigger?.kill();
       pinTrigger?.kill();
       ctx.revert();

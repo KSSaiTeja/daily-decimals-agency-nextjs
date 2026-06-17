@@ -17,12 +17,16 @@ import {
 } from "next/font/google";
 import {
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 import { BrandLogo } from "@/components/brand";
+import {
+  initPageScrollStability,
+} from "@/lib/animation/scroll-trigger-config";
 import { PreloaderReadyContext } from "./PreloaderReadyContext";
 import "./preloader.css";
 
@@ -316,6 +320,11 @@ type PreloaderGateProps = {
 export function PreloaderGate({ children }: PreloaderGateProps) {
   const [ready, setReady] = useState(false);
   const handleComplete = useCallback(() => setReady(true), []);
+
+  useEffect(() => {
+    if (!ready) return;
+    return initPageScrollStability();
+  }, [ready]);
 
   return (
     <PreloaderReadyContext.Provider value={ready}>

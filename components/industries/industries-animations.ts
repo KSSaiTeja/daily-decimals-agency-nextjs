@@ -2,6 +2,7 @@
 
 import gsap from "gsap";
 import { splitTitleLines } from "@/lib/animation/split-chars";
+import { observeSectionReveal } from "@/lib/animation/section-reveal";
 import { usePreloaderReady } from "@/components/preloader";
 import { useLayoutEffect, useRef } from "react";
 
@@ -10,20 +11,8 @@ const MOTION = {
   easeSecondary: "power3.out",
 } as const;
 
-const REVEAL_VISIBLE_RATIO = 0.2;
-const REVEAL_ROOT_MARGIN = "-10% 0px -16% 0px";
-
 function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-function shouldReveal(entry: IntersectionObserverEntry) {
-  if (!entry.isIntersecting) return false;
-  if (entry.intersectionRatio < REVEAL_VISIBLE_RATIO) return false;
-
-  const rect = entry.boundingClientRect;
-  const vh = window.innerHeight || document.documentElement.clientHeight;
-  return rect.top <= vh * 0.74 && rect.bottom >= vh * 0.14;
 }
 
 export function useIndustriesSectionAnimations() {
@@ -35,7 +24,7 @@ export function useIndustriesSectionAnimations() {
     const section = sectionRef.current;
     if (!section || !ready) return;
 
-    let observer: IntersectionObserver | null = null;
+    let disconnectReveal: (() => void) | null = null;
 
     const ctx = gsap.context(() => {
       const panel = section.querySelector<HTMLElement>("[data-industries-panel]");
@@ -134,26 +123,17 @@ export function useIndustriesSectionAnimations() {
 
       setInitialState();
 
-      observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (shouldReveal(entry)) {
-              playReveal();
-              observer?.disconnect();
-              break;
-            }
-          }
-        },
-        { threshold: [0, REVEAL_VISIBLE_RATIO, 0.35], rootMargin: REVEAL_ROOT_MARGIN },
-      );
+      disconnectReveal = observeSectionReveal({
+        target: section,
+        onReveal: playReveal,
+        hasRevealed: () => hasPlayedRef.current,
+      });
 
-      observer.observe(section);
-
-      return () => observer?.disconnect();
+      return () => disconnectReveal?.();
     }, section);
 
     return () => {
-      observer?.disconnect();
+      disconnectReveal?.();
       ctx.revert();
     };
   }, [ready]);

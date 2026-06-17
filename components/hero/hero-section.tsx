@@ -52,7 +52,7 @@ function HeroHeader() {
 export function HeroSection() {
   return (
     <section
-      className="hero relative z-10 flex min-h-[100svh] w-full flex-col overflow-x-clip overflow-y-visible bg-surface lg:overflow-x-visible"
+      className="hero relative z-10 flex min-h-[100svh] w-full max-w-full flex-col overflow-visible bg-surface"
       aria-label="Hero"
     >
       <HeroStatusNotch />
@@ -60,7 +60,7 @@ export function HeroSection() {
       <HeroHeader />
 
       <div className="hero-inner mx-auto flex min-h-0 w-full max-w-[90rem] flex-1 flex-col gap-0 px-[var(--page-gutter)] pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] sm:gap-1 sm:pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] lg:grid lg:min-h-0 lg:grid-cols-2 lg:items-stretch lg:gap-10 lg:pb-20 xl:gap-12">
-        <div className="hero-stack order-1 -mt-3 flex items-start justify-center overflow-visible sm:-mt-1 lg:order-2 lg:col-start-2 lg:row-start-1 lg:mt-0 lg:min-h-0 lg:h-full lg:flex-1 lg:items-center lg:justify-center lg:py-0">
+        <div className="hero-stack order-1 -mt-3 flex min-h-[30rem] items-start justify-center overflow-visible sm:-mt-1 sm:min-h-[32rem] lg:order-2 lg:col-start-2 lg:row-start-1 lg:mt-0 lg:h-full lg:min-h-[34rem] lg:flex-1 lg:items-center lg:justify-center lg:py-0">
           <HeroCardStack />
         </div>
 

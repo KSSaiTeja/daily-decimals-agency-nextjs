@@ -10,6 +10,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const ENTRANCE_DURATION = 1.45;
 const ENTRANCE_STAGGER = 0.1;
+const RESIZE_DEBOUNCE_MS = 200;
 
 function slideOffset() {
   return Math.round(window.innerWidth * 0.88);
@@ -50,7 +51,6 @@ export function RibbonSection() {
   const ready = usePreloaderReady();
   const [marqueeActive, setMarqueeActive] = useState(false);
   const hasEntered = useRef(false);
-  const observerPrimed = useRef(false);
   const entranceTimelineRef = useRef<gsap.core.Timeline | null>(null);
 
   useLayoutEffect(() => {
@@ -80,6 +80,15 @@ export function RibbonSection() {
 
       gsap.set(statsEl, { y: 0, rotation: layout.statsRotation });
       gsap.set(servicesEl, { y: 0, rotation: layout.servicesRotation });
+    };
+
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        syncLayout();
+        resizeTimer = null;
+      }, RESIZE_DEBOUNCE_MS);
     };
 
     const runEntrance = () => {
@@ -153,29 +162,27 @@ export function RibbonSection() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!observerPrimed.current) {
-          observerPrimed.current = true;
-          if (entry.isIntersecting) return;
-        }
         if (entry.isIntersecting) runEntrance();
       },
-      { threshold: 0.18, rootMargin: "0px 0px -4% 0px" },
+      { threshold: 0.12, rootMargin: "0px 0px -4% 0px" },
     );
 
     observer.observe(section);
 
     requestAnimationFrame(() => {
       const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
       const inView =
-        rect.top < window.innerHeight * 0.82 && rect.bottom > window.innerHeight * 0.08;
+        rect.top < vh * 0.9 && rect.bottom > vh * 0.1;
       if (inView) runEntrance();
     });
 
-    window.addEventListener("resize", syncLayout);
+    window.addEventListener("resize", onResize);
 
     return () => {
       observer.disconnect();
-      window.removeEventListener("resize", syncLayout);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
       entranceTimelineRef.current?.kill();
     };
   }, [ready]);

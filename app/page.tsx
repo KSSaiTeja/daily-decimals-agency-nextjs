@@ -11,20 +11,21 @@ import { FooterSection } from "@/components/footer";
 import { TestimonialsSection } from "@/components/testimonials";
 import { PreloaderGate } from "@/components/preloader";
 import { SiteBottomNav } from "@/components/navigation";
+import { SHOW_TESTIMONIALS } from "@/lib/site-layout";
 
 export default function Page() {
   return (
     <PreloaderGate>
-      <div className="min-h-screen bg-surface">
+      <div className="site-shell min-h-screen bg-surface">
         <HeroSection />
         <RibbonSection />
         <AboutSection />
-        <IndustriesSection />
         <FunnelSection />
-        <ServicesSection />
+        <IndustriesSection />
         <AdvantagesSection />
         <ProcessSection />
-        <TestimonialsSection />
+        <ServicesSection />
+        {SHOW_TESTIMONIALS ? <TestimonialsSection /> : null}
         <ContactSection />
         <FooterSection />
         <SiteBottomNav />

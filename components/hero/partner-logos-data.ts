@@ -5,7 +5,7 @@ export type PartnerLogo = {
 
 function partnerLogo(filename: string): string {
   return `/images/logos/${encodeURIComponent(filename)}`;
-}
+} 
 
 export const PARTNER_LOGOS: PartnerLogo[] = [
   { name: "Wink and Wish", src: partnerLogo("wink & wish.png") },

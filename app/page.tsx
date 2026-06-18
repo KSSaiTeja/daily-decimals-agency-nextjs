@@ -1,6 +1,6 @@
 import { AboutSection } from "@/components/about";
 import { AdvantagesSection } from "@/components/advantages";
-import { ProcessSection } from "@/components/process";
+// import { ProcessSection } from "@/components/process";
 import { FunnelSection } from "@/components/funnel";
 import { HeroSection } from "@/components/hero";
 import { IndustriesSection } from "@/components/industries";
@@ -21,10 +21,10 @@ export default function Page() {
         <RibbonSection />
         <AboutSection />
         <FunnelSection />
+        <ServicesSection />
         <IndustriesSection />
         <AdvantagesSection />
-        <ProcessSection />
-        <ServicesSection />
+        {/* <ProcessSection /> */}
         {SHOW_TESTIMONIALS ? <TestimonialsSection /> : null}
         <ContactSection />
         <FooterSection />

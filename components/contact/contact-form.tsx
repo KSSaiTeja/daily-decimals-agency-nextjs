@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  CONTACT_COUNTRY_CODES,
   CONTACT_DEMO_SUCCESS,
   CONTACT_SUBMIT_LABEL,
   CONTACT_SUBMITTING_LABEL,
@@ -20,10 +21,11 @@ const FIELD_CLASS =
 
 const DEMO_SUBMIT_DELAY_MS = 1200;
 
-function openMailDraft(name: string, email: string, message: string) {
-  const subject = encodeURIComponent(`New enquiry from ${name}`);
+function openMailDraft(form: ContactFormState) {
+  const phone = `${form.countryCode} ${form.mobile}`.trim();
+  const subject = encodeURIComponent(`New enquiry from ${form.name}`);
   const body = encodeURIComponent(
-    `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+    `Name: ${form.name}\nEmail: ${form.email}\nMobile: ${phone}\nCompany: ${form.company}\nDesignation: ${form.designation}\n\nHow can we help:\n${form.message}`,
   );
   window.location.href = `mailto:${CONTACT_SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
 }
@@ -63,11 +65,12 @@ export function ContactForm({ className = "" }: ContactFormProps) {
 
     const name = form.name.trim();
     const email = form.email.trim();
+    const mobile = form.mobile.trim();
     const message = form.message.trim();
 
-    if (!name || !email || !message) {
+    if (!name || !email || !mobile || !message) {
       setStatus("error");
-      setError("Please fill all the fields before submitting.");
+      setError("Please fill the required fields before submitting.");
       return;
     }
 
@@ -76,6 +79,16 @@ export function ContactForm({ className = "" }: ContactFormProps) {
       setError("Please enter a valid email address.");
       return;
     }
+
+    const trimmedForm: ContactFormState = {
+      ...form,
+      name,
+      email,
+      mobile,
+      company: form.company.trim(),
+      designation: form.designation.trim(),
+      message,
+    };
 
     try {
       setStatus("submitting");
@@ -92,7 +105,7 @@ export function ContactForm({ className = "" }: ContactFormProps) {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify(trimmedForm),
       });
 
       const payload = (await response.json()) as {
@@ -111,7 +124,7 @@ export function ContactForm({ className = "" }: ContactFormProps) {
       setSentViaWebhook(delivered);
 
       if (!delivered) {
-        openMailDraft(name, email, message);
+        openMailDraft(trimmedForm);
       }
 
       setStatus("success");
@@ -172,13 +185,72 @@ export function ContactForm({ className = "" }: ContactFormProps) {
 
       <label className="flex w-full flex-col gap-2.5">
         <span className="type-body-md text-[clamp(1.0625rem,1.4vw,1.25rem)] text-white">
-          Project Description
+          Your Mobile Number
+        </span>
+        <div className="flex w-full items-end gap-3">
+          <select
+            value={form.countryCode}
+            onChange={(event) => updateField("countryCode", event.target.value)}
+            className={`${FIELD_CLASS} w-auto shrink-0 pr-6 [&>option]:text-black`}
+            name="countryCode"
+            aria-label="Country code"
+          >
+            {CONTACT_COUNTRY_CODES.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.label}
+              </option>
+            ))}
+          </select>
+          <input
+            type="tel"
+            value={form.mobile}
+            onChange={(event) => updateField("mobile", event.target.value)}
+            className={`${FIELD_CLASS} flex-1`}
+            placeholder="Enter your Mobile Number"
+            autoComplete="tel"
+            name="mobile"
+            required
+          />
+        </div>
+      </label>
+
+      <label className="flex w-full flex-col gap-2.5">
+        <span className="type-body-md text-[clamp(1.0625rem,1.4vw,1.25rem)] text-white">
+          Your Company Name
+        </span>
+        <input
+          value={form.company}
+          onChange={(event) => updateField("company", event.target.value)}
+          className={FIELD_CLASS}
+          placeholder="Enter your Company Name"
+          autoComplete="organization"
+          name="company"
+        />
+      </label>
+
+      <label className="flex w-full flex-col gap-2.5">
+        <span className="type-body-md text-[clamp(1.0625rem,1.4vw,1.25rem)] text-white">
+          Your Designation
+        </span>
+        <input
+          value={form.designation}
+          onChange={(event) => updateField("designation", event.target.value)}
+          className={FIELD_CLASS}
+          placeholder="Enter your Designation"
+          autoComplete="organization-title"
+          name="designation"
+        />
+      </label>
+
+      <label className="flex w-full flex-col gap-2.5">
+        <span className="type-body-md text-[clamp(1.0625rem,1.4vw,1.25rem)] text-white">
+          How Can We Help?
         </span>
         <textarea
           value={form.message}
           onChange={(event) => updateField("message", event.target.value)}
           className={`${FIELD_CLASS} min-h-[120px] resize-y leading-[1.45]`}
-          placeholder="Type Here..."
+          placeholder="Give us your project description and more context to your business"
           name="message"
           required
         />

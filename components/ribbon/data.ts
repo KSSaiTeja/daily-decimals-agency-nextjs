@@ -1,21 +1,20 @@
 export const RIBBON_SERVICES = [
-  "Brand Design",
-  "UI/UX Design",
-  "Marketing",
   "Website Design",
-  "Product Design",
-  "Creative Direction",
+  "Apps UI/UX",
+  "Content Writing",
+  "Video Ads",
+  "Social Media",
+  "Performance Marketing",
+  "Drip Campaigns",
 ] as const;
 
 export const RIBBON_STATS = [
-  "94% Client Retention",
-  "300+ Projects Launched",
-  "50+ Industry Awards",
-  "10+ Years Experience",
-  "4.9/5 Star Rating",
-  "24/7 Support Team",
-  "100% Client Satisfaction",
-  "Global Reach",
+  "Customer Acquisition",
+  "CAC",
+  "Retention",
+  "Engagement",
+  "CLTV",
+  "Full-Funnel Optimization",
 ] as const;
 
 export const RIBBON_MARQUEE_SPEED = 48;

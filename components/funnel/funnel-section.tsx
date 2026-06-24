@@ -21,13 +21,12 @@ export function FunnelSection() {
       aria-label="Growth funnel"
       className="funnel-section scroll-mt-8"
     >
-      <div data-funnel-intro className="funnel-section__intro">
-        <FunnelHeader />
-      </div>
-
       <div data-funnel-pin-track className="funnel-pin-track">
         <div ref={stickyRef} data-funnel-sticky-viewport className="funnel-sticky-viewport">
           <div className="funnel-sticky__inner">
+            <div data-funnel-intro className="funnel-sticky__header">
+              <FunnelHeader />
+            </div>
             <FunnelBody />
           </div>
         </div>

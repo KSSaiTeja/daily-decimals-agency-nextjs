@@ -22,8 +22,8 @@ export default function Page() {
         <AboutSection />
         <FunnelSection />
         <ServicesSection />
-        <IndustriesSection />
         <AdvantagesSection />
+        <IndustriesSection />
         {/* <ProcessSection /> */}
         {SHOW_TESTIMONIALS ? <TestimonialsSection /> : null}
         <ContactSection />

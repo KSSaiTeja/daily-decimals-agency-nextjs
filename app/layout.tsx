@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Inter } from "next/font/google";
+import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import "./globals.css";
 
 const inter = Inter({
@@ -10,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Daily Decimals — Design & Digital Studio",
+  title: "Daily Decimals | Design & Digital Studio",
   description:
     "Switch up to the next generation era. Brand design, web design, UI/UX, and marketing for founders who move fast.",
 };
@@ -28,7 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }

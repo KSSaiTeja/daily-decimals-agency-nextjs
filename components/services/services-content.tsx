@@ -1,7 +1,6 @@
 import type { ServiceContent } from "@/components/services/data";
 import { ServicesBackgroundMarquee } from "@/components/services/services-background-marquee";
 import { ServicesImageBox } from "@/components/services/services-image-box";
-import { ServicesTags } from "@/components/services/services-tags";
 
 type ServicesContentProps = {
   service: ServiceContent;
@@ -11,7 +10,7 @@ export function ServicesContent({ service }: ServicesContentProps) {
   return (
     <div className="services-content">
       <div className="services-visual-stage">
-        <ServicesBackgroundMarquee phrase={service.backgroundPhrase} />
+        <ServicesBackgroundMarquee items={service.tags} />
         <ServicesImageBox service={service} />
       </div>
 
@@ -19,11 +18,12 @@ export function ServicesContent({ service }: ServicesContentProps) {
         className="services-content__copy type-lead text-ink"
         data-services-paragraph
       >
-        <p data-services-paragraph-line>{service.description[0]}</p>
-        <p data-services-paragraph-line>{service.description[1]}</p>
+        {service.description.map((line, index) => (
+          <p key={index} data-services-paragraph-line>
+            {line}
+          </p>
+        ))}
       </div>
-
-      <ServicesTags service={service} />
     </div>
   );
 }

@@ -7,6 +7,11 @@ function heroImageUrl(filename: string): string {
   return `/hero-images/${filename}`;
 }
 
+/** Advantages section card images — grouped under /images/advantages/. */
+function advantageImageUrl(filename: string): string {
+  return `/images/advantages/${filename}`;
+}
+
 export const heroCardImages = [
   heroImageUrl("card-1.png"),
   heroImageUrl("card-2.png"),
@@ -43,16 +48,13 @@ export const iconAccent13 = imageUrl("icon-accent-13.png");
 export const processBackground = imageUrl("process-background.png");
 export const processOverlay = imageUrl("process-overlay.png");
 export const logoSecondary = imageUrl("logo-secondary.png");
-export const interiorShowcase = imageUrl("interior-showcase.png");
-export const logoPlaceholder = imageUrl("logo-placeholder.png");
-export const innovationVisual = imageUrl("innovation-visual.png");
-export const iconAccent14 = imageUrl("icon-accent-14.png");
-export const iconAccent15 = imageUrl("icon-accent-15.png");
-export const advantageVisual1 = imageUrl("advantage-visual-1.png");
-export const advantageVisual2 = imageUrl("advantage-visual-2.png");
-export const advantageVisual3 = imageUrl("advantage-visual-3.png");
-export const advantageVisual4 = imageUrl("advantage-visual-4.png");
-export const testimonialFeature = imageUrl("testimonial-feature.png");
-export const personaBlur = imageUrl("persona-blur.png");
-export const personaSharp = imageUrl("persona-sharp.png");
-export const productDetail = imageUrl("product-detail.png");
+export const pixelsWithPurpose = advantageImageUrl("pixels-with-purpose.png");
+export const endToEndOwnership = advantageImageUrl("end-to-end-ownership.png");
+export const productMeetsMarketing = advantageImageUrl("product-meets-marketing.png");
+export const connectedCustomerJourneys = advantageImageUrl("connected-customer-journeys.png");
+export const fromInsightsToExecution = advantageImageUrl("from-insights-to-execution.png");
+export const buildingRevenueEngines1 = advantageImageUrl("building-revenue-engines-1.png");
+export const buildingRevenueEngines2 = advantageImageUrl("building-revenue-engines-2.png");
+export const buildingRevenueEngines3 = advantageImageUrl("building-revenue-engines-3.png");
+export const buildingRevenueEngines4 = advantageImageUrl("building-revenue-engines-4.png");
+export const buildingRevenueEngines5 = advantageImageUrl("building-revenue-engines-5.png");

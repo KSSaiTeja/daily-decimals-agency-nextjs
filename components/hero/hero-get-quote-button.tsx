@@ -20,7 +20,7 @@ export function HeroGetQuoteButton({ className = "" }: HeroGetQuoteButtonProps) 
         className="absolute inset-x-0 top-0 h-full rounded-full bg-brand"
       />
       <span className="relative text-[15px] font-medium leading-none tracking-[-0.14px] whitespace-nowrap text-white">
-        Get Quote
+        Contact Us
       </span>
       <span
         aria-hidden

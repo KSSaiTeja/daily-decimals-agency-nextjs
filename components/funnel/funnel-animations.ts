@@ -28,8 +28,8 @@ const MOTION = {
 const SCRUB = {
   approach: 0.9,
   pin: 1.15,
-  approachMobile: 0.55,
-  pinMobile: 0.75,
+  approachMobile: 1.1,
+  pinMobile: 1.5,
 } as const;
 
 const RESIZE_DEBOUNCE_MS = 220;

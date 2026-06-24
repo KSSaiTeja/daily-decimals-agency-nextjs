@@ -58,6 +58,7 @@ export function useAdvantagesSectionAnimations() {
       const titleEmphasis = section.querySelector<HTMLElement>("[data-advantages-title-emphasis]");
       const subtitle = section.querySelector<HTMLElement>("[data-advantages-subtitle]");
       const bento = section.querySelector<HTMLElement>("[data-advantages-bento]");
+      const cards = section.querySelectorAll<HTMLElement>("[data-advantages-card]");
       const imageNodes = section.querySelectorAll<HTMLElement>("[data-advantages-image]");
       const wordGroups = section.querySelectorAll<HTMLElement>("[data-advantages-word-group]");
 
@@ -85,6 +86,7 @@ export function useAdvantagesSectionAnimations() {
         if (chars.length) gsap.set(chars, { autoAlpha: 1, y: 0, filter: "blur(0px)" });
         if (subtitle) gsap.set(subtitle, { autoAlpha: 1, y: 0, filter: "blur(0px)" });
         if (bento) gsap.set(bento, { autoAlpha: 1, y: 0 });
+        if (cards.length) gsap.set(cards, { autoAlpha: 1, y: 0, scale: 1 });
         if (imageNodes.length) gsap.set(imageNodes, { autoAlpha: 1, scale: 1, filter: "blur(0px)" });
         wordGroups.forEach((group) => {
           const words = group.querySelectorAll<HTMLElement>("[data-advantages-word]");
@@ -99,6 +101,7 @@ export function useAdvantagesSectionAnimations() {
         if (chars.length) gsap.set(chars, { autoAlpha: 0, y: 16, filter: "blur(8px)" });
         if (subtitle) gsap.set(subtitle, { autoAlpha: 0, y: 12, filter: "blur(6px)" });
         if (bento) gsap.set(bento, { autoAlpha: 0, y: 28 });
+        if (cards.length) gsap.set(cards, { autoAlpha: 0, y: 26, scale: 0.97 });
         if (imageNodes.length) {
           gsap.set(imageNodes, { autoAlpha: 0, scale: 1.085, filter: "blur(14px)" });
         }
@@ -176,6 +179,21 @@ export function useAdvantagesSectionAnimations() {
             { autoAlpha: 0, y: 28 },
             { autoAlpha: 1, y: 0, duration: 0.8, ease: MOTION.easeSecondary },
             0.14,
+          );
+        }
+
+        if (cards.length) {
+          tl.to(
+            cards,
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.72,
+              stagger: 0.09,
+              ease: MOTION.easeSecondary,
+            },
+            0.18,
           );
         }
 

@@ -5,6 +5,7 @@ import { AboutAuditCta } from "@/components/about/about-audit-cta";
 import { AboutStatCard } from "@/components/about/about-stat-card";
 import {
   ABOUT_EYEBROW,
+  ABOUT_PARAGRAPHS,
   ABOUT_SLOGAN,
   ABOUT_STATS,
 } from "@/components/about/data";
@@ -40,12 +41,18 @@ export function AboutSection() {
                 </p>
               </div>
 
-              <p
-                data-about-word-reveal
-                className="type-prose min-w-0 max-w-[56.25rem] flex-1"
-              >
-                {ABOUT_SLOGAN.prose}
-              </p>
+              <div className="flex min-w-0 max-w-[56.25rem] flex-1 flex-col gap-5 lg:gap-6">
+                <p data-about-lead className="type-prose">
+                  {ABOUT_PARAGRAPHS[0]}
+                </p>
+                <div className="flex flex-col gap-3 sm:gap-3.5">
+                  {ABOUT_PARAGRAPHS.slice(1).map((paragraph, index) => (
+                    <p key={index} data-about-paragraph className="type-lead">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-8 lg:gap-10">

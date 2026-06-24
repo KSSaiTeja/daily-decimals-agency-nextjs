@@ -2,11 +2,11 @@
 
 export type ServiceLottieLabel =
   | "Strategy"
-  | "Design"
+  | "Design & Tech"
   | "Content"
   | "Performance"
   | "Product"
-  | "Media";
+  | "Media & Channels";
 
 export type ServiceLottieConfig = {
   src: string;
@@ -17,34 +17,27 @@ export type ServiceLottieConfig = {
 };
 
 const LOTTIE_MASK = {
-  bottomClipPercent: 18,
+  bottomClipPercent: 20,
   fadeLengthPercent: 42,
 } as const;
 
-const LOTTIE_ASSETS = {
-  webDesign: {
-    src: "/lottie/Web%20Design.json",
-    background: "#E9E9E9",
-    inset: "2%",
-  },
-  brandDesign: {
-    src: "/lottie/Branding.json",
-    background: "#F5F5F5",
-    inset: "2%",
-  },
+const LOTTIE_BASE = {
+  background: "#F5F5F5",
+  inset: "2%",
 } as const;
 
-function lottieForTab(asset: keyof typeof LOTTIE_ASSETS): ServiceLottieConfig {
-  return { ...LOTTIE_ASSETS[asset], ...LOTTIE_MASK };
+/** Each service tab maps to its own optimized Lottie (URL-encoded file names). */
+function lottieForSrc(src: string): ServiceLottieConfig {
+  return { src, ...LOTTIE_BASE, ...LOTTIE_MASK };
 }
 
 export const SERVICE_LOTTIE: Record<ServiceLottieLabel, ServiceLottieConfig> = {
-  Strategy: lottieForTab("webDesign"),
-  Design: lottieForTab("brandDesign"),
-  Content: lottieForTab("brandDesign"),
-  Performance: lottieForTab("webDesign"),
-  Product: lottieForTab("webDesign"),
-  Media: lottieForTab("brandDesign"),
+  Strategy: lottieForSrc("/lottie/Strategy.json"),
+  "Design & Tech": lottieForSrc("/lottie/Design%20%26%20Tech.json"),
+  Content: lottieForSrc("/lottie/Content.json"),
+  Performance: lottieForSrc("/lottie/Performance.json"),
+  Product: lottieForSrc("/lottie/Product.json"),
+  "Media & Channels": lottieForSrc("/lottie/Media%20%26%20Channel.json"),
 };
 
 export function isServiceLottieLabel(label: string): label is ServiceLottieLabel {

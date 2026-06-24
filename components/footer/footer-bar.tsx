@@ -2,24 +2,27 @@
 
 import { FOOTER_COPY } from "@/components/footer/data";
 import { FooterIstClock } from "@/components/footer/footer-ist-clock";
-import { scrollToTop } from "@/lib/navigation/scroll-to-section";
 
 export function FooterBar() {
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="footer-bar" data-name="Content">
       <p className="footer-bar__meta footer-bar__copyright">{FOOTER_COPY.copyright}</p>
 
-      <div className="footer-bar__time" data-name="Time">
-        <span className="footer-bar__meta">{FOOTER_COPY.timezoneLabel}</span>
+      <p className="footer-bar__time">
+        <span className="footer-bar__time-label">Local time</span>
         <FooterIstClock />
-      </div>
+      </p>
 
       <button
         type="button"
         className="footer-bar__back-to-top"
-        onClick={scrollToTop}
+        onClick={handleBackToTop}
       >
-        {FOOTER_COPY.backToTop}
+        Back to top ↑
       </button>
     </div>
   );

@@ -65,7 +65,7 @@ export function HeroSection() {
         </div>
 
         <div className="hero-content order-2 -mt-5 flex min-w-0 shrink-0 flex-col sm:mt-0 lg:order-1 lg:col-start-1 lg:row-start-1 lg:mt-0 lg:h-full lg:shrink lg:justify-end lg:pb-6 lg:pr-0 xl:pb-8">
-          <div className="flex flex-col items-start gap-3 sm:gap-5 lg:gap-9 xl:gap-10">
+          <div className="flex flex-col items-start gap-4 sm:gap-5 lg:gap-9 xl:gap-10">
             <HeroFounderTrust />
             <HeroHeadline />
           </div>

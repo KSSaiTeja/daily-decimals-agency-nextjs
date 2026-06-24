@@ -30,9 +30,9 @@ export function HeroFounderTrust() {
       </div>
       <p
         data-founder-trust
-        className="type-body text-[15px] text-ink-subtle whitespace-nowrap sm:text-base"
+        className="type-body text-[15px] text-ink-subtle sm:text-base"
       >
-        Trusted by founders.
+        Outcome-focussed growth partners.
       </p>
     </div>
   );

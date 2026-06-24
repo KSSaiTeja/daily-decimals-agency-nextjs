@@ -1,9 +1,10 @@
 type ServicesBackgroundMarqueeProps = {
-  phrase: string;
+  items: readonly string[];
 };
 
-function MarqueeChunk({ phrase }: { phrase: string }) {
-  const marqueeText = Array.from({ length: 8 }, () => phrase).join("   •   ");
+function MarqueeChunk({ items }: { items: readonly string[] }) {
+  const sequence = items.join("   •   ");
+  const marqueeText = Array.from({ length: 4 }, () => sequence).join("   •   ");
 
   return (
     <div className="services-bg-marquee__chunk" data-services-marquee-chunk>
@@ -12,13 +13,13 @@ function MarqueeChunk({ phrase }: { phrase: string }) {
   );
 }
 
-export function ServicesBackgroundMarquee({ phrase }: ServicesBackgroundMarqueeProps) {
+export function ServicesBackgroundMarquee({ items }: ServicesBackgroundMarqueeProps) {
   return (
     <div className="services-bg-marquee" aria-hidden>
       <div className="services-bg-marquee__mask">
         <div data-services-marquee-track className="services-bg-marquee__track">
-          <MarqueeChunk phrase={phrase} />
-          <MarqueeChunk phrase={phrase} />
+          <MarqueeChunk items={items} />
+          <MarqueeChunk items={items} />
         </div>
       </div>
       <div className="services-bg-marquee__fade services-bg-marquee__fade--left" />

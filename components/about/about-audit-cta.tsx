@@ -1,4 +1,5 @@
-import { ABOUT_AUDIT_CTA, ABOUT_AVAILABILITY } from "@/components/about/data";
+import { ABOUT_AUDIT_CTA } from "@/components/about/data";
+// import { ABOUT_AVAILABILITY } from "@/components/about/data";
 
 function AuditArrowIcon() {
   return (
@@ -19,19 +20,20 @@ function AuditArrowIcon() {
   );
 }
 
-function AvailabilityPulse() {
-  return (
-    <div
-      className="relative flex size-4 shrink-0 items-center justify-center"
-      data-name="green/red"
-      aria-hidden
-    >
-      <span className="about-availability-pulse-ring absolute inset-0 rounded-full bg-[#09c300]/35" />
-      <span className="about-availability-pulse-ring about-availability-pulse-ring--delayed absolute inset-0 rounded-full bg-[#09c300]/22" />
-      <span className="about-availability-pulse-core relative size-[11px] rounded-full bg-[#09c300] shadow-[0_0_10px_rgba(9,195,0,0.5)]" />
-    </div>
-  );
-}
+// Availability pulse hidden for now — uncomment alongside the slots block below.
+// function AvailabilityPulse() {
+//   return (
+//     <div
+//       className="relative flex size-4 shrink-0 items-center justify-center"
+//       data-name="green/red"
+//       aria-hidden
+//     >
+//       <span className="about-availability-pulse-ring absolute inset-0 rounded-full bg-[#09c300]/35" />
+//       <span className="about-availability-pulse-ring about-availability-pulse-ring--delayed absolute inset-0 rounded-full bg-[#09c300]/22" />
+//       <span className="about-availability-pulse-core relative size-[11px] rounded-full bg-[#09c300] shadow-[0_0_10px_rgba(9,195,0,0.5)]" />
+//     </div>
+//   );
+// }
 
 export function AboutAuditCta() {
   return (
@@ -55,6 +57,7 @@ export function AboutAuditCta() {
         </a>
       </div>
 
+      {/* Availability slots hidden for now — uncomment to re-enable.
       <div
         data-about-slots
         className="flex shrink-0 flex-col items-center"
@@ -67,6 +70,7 @@ export function AboutAuditCta() {
           <AvailabilityPulse />
         </div>
       </div>
+      */}
     </div>
   );
 }

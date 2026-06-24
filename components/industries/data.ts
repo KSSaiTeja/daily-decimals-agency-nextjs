@@ -14,12 +14,12 @@ export type Industry = {
   icon: IndustryIconName;
 };
 
-export const INDUSTRIES_EYEBROW = "(Industries we serve)";
+export const INDUSTRIES_EYEBROW = "( Industries We've Worked With )";
 
 export const INDUSTRIES_HEADING = {
   titleLead: "Trusted across",
   titleEmphasis: "many sectors",
-  subtitle: "Partnerships with teams building bold brands.",
+  subtitle: "Forging partnerships that last long.",
 } as const;
 
 export const INDUSTRIES: Industry[] = [

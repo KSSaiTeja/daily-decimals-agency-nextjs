@@ -5,12 +5,13 @@ export type FunnelStage = {
   description: string;
 };
 
-export const FUNNEL_EYEBROW = "(Growth funnel)";
+export const FUNNEL_EYEBROW = "( End-to-End Funnel Management )";
 
 export const FUNNEL_HEADING = {
-  titleLead: "Our full",
-  titleEmphasis: "growth path",
-  subtitle: "Every stage, engineered to convert.",
+  titleLead: "One partner,",
+  titleEmphasis: "every stage.",
+  subtitle:
+    "From discoverability to loyalty, we manage the entire customer journey to drive measurable, profitable and sustainable growth.",
 } as const;
 
 export const FUNNEL_STAGES: FunnelStage[] = [

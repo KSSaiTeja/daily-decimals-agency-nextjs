@@ -157,7 +157,6 @@ export function Preloader({ onComplete }: PreloaderProps) {
   const wordSlotRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLSpanElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
-  const counterRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     document.body.classList.add("preloader-active");
@@ -167,9 +166,8 @@ export function Preloader({ onComplete }: PreloaderProps) {
     const wordSlot = wordSlotRef.current;
     const wordEl = wordRef.current;
     const logoEl = logoRef.current;
-    const counterEl = counterRef.current;
 
-    if (!overlay || !center || !wordSlot || !wordEl || !logoEl || !counterEl) {
+    if (!overlay || !center || !wordSlot || !wordEl || !logoEl) {
       document.body.classList.remove("preloader-active");
       onComplete();
       return;
@@ -185,36 +183,19 @@ export function Preloader({ onComplete }: PreloaderProps) {
     if (reduceMotion) {
       wordSlot.style.display = "none";
       gsap.set(logoEl, { opacity: 1, scale: 1, y: 0 });
-      counterEl.textContent = "100";
       window.setTimeout(finish, 400);
       return () => document.body.classList.remove("preloader-active");
     }
 
     gsap.set(center, { y: 0, opacity: 1, force3D: true });
-    gsap.set(counterEl, { opacity: 1 });
     gsap.set(logoEl, { opacity: 0, scale: 0.92, y: 10, force3D: true });
-    counterEl.textContent = "0";
 
     const wordsTl = gsap.timeline();
     buildWordTimeline(wordsTl, wordEl);
-    const contentDuration = wordsTl.duration();
 
-    const counterObj = { value: 0 };
     const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
 
     tl.add(wordsTl, 0);
-    tl.to(
-      counterObj,
-      {
-        value: 100,
-        duration: contentDuration,
-        ease: "power1.inOut",
-        onUpdate: () => {
-          counterEl.textContent = String(Math.round(counterObj.value));
-        },
-      },
-      0,
-    );
 
     tl.to({}, { duration: HOLD_AT_END });
 
@@ -254,12 +235,6 @@ export function Preloader({ onComplete }: PreloaderProps) {
     );
 
     tl.to(
-      counterEl,
-      { opacity: 0, duration: EXIT_DURATION * 0.65, ease: "power2.inOut" },
-      "<0.25",
-    );
-
-    tl.to(
       overlay,
       {
         opacity: 0,
@@ -296,16 +271,10 @@ export function Preloader({ onComplete }: PreloaderProps) {
           </span>
         </div>
         <div ref={logoRef} className="preloader-logo" aria-hidden>
-          <BrandLogo className="w-[min(72vw,220px)]" alt="" />
-        </div>
-      </div>
-
-      <div className="preloader-counter">
-        <div
-          ref={counterRef}
-          className={`preloader-counter-text ${fontBebas.className} preloader-tone-counter`}
-        >
-          0
+          <BrandLogo className="w-[min(72vw,240px)]" alt="" />
+          <p className={`preloader-tagline ${fontBebas.className}`}>
+           Outcome-focused Growth Partner
+          </p>
         </div>
       </div>
     </div>

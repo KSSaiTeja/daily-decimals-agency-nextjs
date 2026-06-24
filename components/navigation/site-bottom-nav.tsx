@@ -194,18 +194,50 @@ function NavHighlight({ rect }: { rect: HighlightRect }) {
 export function SiteBottomNav() {
   const preloaderReady = usePreloaderReady();
   const [visible, setVisible] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const compactLabels = useCompactNavLabels();
   const pillRef = useRef<HTMLDivElement>(null);
   const { highlight, showHighlight, hideHighlight } = useNavHighlight(pillRef);
 
   useEffect(() => {
-    if (!preloaderReady) {
-      setVisible(false);
-      return;
-    }
+    if (!preloaderReady) return;
 
     const frame = requestAnimationFrame(() => setVisible(true));
     return () => cancelAnimationFrame(frame);
+  }, [preloaderReady]);
+
+  // Hide on scroll-down (so it never overlaps content), reveal on any upward
+  // scroll — even a slight one — and always show near the top of the page.
+  useEffect(() => {
+    if (!preloaderReady) return;
+
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const evaluate = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+
+      if (y < 96) {
+        setHidden(false);
+      } else if (delta > 4) {
+        setHidden(true);
+      } else if (delta < -4) {
+        setHidden(false);
+      }
+
+      lastY = y;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(evaluate);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, [preloaderReady]);
 
   const handlePillLeave = (event: MouseEvent<HTMLDivElement>) => {
@@ -226,8 +258,12 @@ export function SiteBottomNav() {
     <nav
       aria-label="Primary"
       data-site-bottom-nav
-      className={`pointer-events-none fixed bottom-0 left-1/2 z-[100] w-full max-w-[100vw] -translate-x-1/2 px-3 pt-8 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
-        visible ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+      className={`pointer-events-none fixed bottom-0 left-1/2 z-[100] w-full max-w-[100vw] -translate-x-1/2 px-3 pt-8 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[opacity,transform] duration-[680ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+        !visible
+          ? "translate-y-2 opacity-0"
+          : hidden
+            ? "translate-y-[160%] opacity-0"
+            : "translate-y-0 opacity-100"
       }`}
     >
       <div className={`pointer-events-auto mx-auto ${pillLift}`}>

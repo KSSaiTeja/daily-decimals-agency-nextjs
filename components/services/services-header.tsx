@@ -20,6 +20,11 @@ export function ServicesHeader() {
               {SERVICES_HEADING.titleEmphasis}
             </span>
           </h2>
+          {SERVICES_HEADING.subtitle ? (
+            <p className="type-lead max-w-[32.5rem]" data-services-subtitle>
+              {SERVICES_HEADING.subtitle}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

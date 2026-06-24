@@ -38,11 +38,24 @@
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: clamp(0.75rem, 2.2vw, 1.1rem);
   opacity: 0;
   pointer-events: none;
   will-change: transform, opacity;
+}
+
+.preloader-tagline {
+  margin: 0;
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  line-height: 1;
+  color: var(--preloader-text);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
 }
 
 .preloader-greeting {
@@ -96,27 +109,6 @@
 .preloader-tone-serif {
   font-weight: 600;
   letter-spacing: -0.04em;
-}
-
-.preloader-counter {
-  position: absolute;
-  right: clamp(1.25rem, 4vw, 3rem);
-  bottom: clamp(1.25rem, 4vw, 3rem);
-  will-change: opacity;
-}
-
-.preloader-counter-text {
-  font-size: var(--preloader-counter-size);
-  line-height: 1;
-  color: var(--preloader-text);
-  font-variant-numeric: tabular-nums;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-.preloader-tone-counter {
-  font-weight: 400;
-  letter-spacing: 0.02em;
 }
 
 body.preloader-active {

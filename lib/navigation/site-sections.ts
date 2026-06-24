@@ -5,11 +5,10 @@ export type SiteSection = {
 
 /** Bottom pill links — order matches site section flow. */
 export const SITE_NAV_SECTIONS: SiteSection[] = [
-  { id: "about", label: "About" },
+  { id: "about", label: "How We Work" },
   { id: "services", label: "Services" },
-  { id: "process", label: "Approach" },
-  { id: "testimonials", label: "Testimonials" },
-  { id: "contact", label: "Contact" },
+  { id: "funnel", label: "Approach" },
+  { id: "contact", label: "Contact Us" },
 ];
 
 export const CONTACT_SECTION_ID = "contact";

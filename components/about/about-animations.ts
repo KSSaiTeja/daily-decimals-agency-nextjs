@@ -33,24 +33,32 @@ function prepareYearChars(el: HTMLElement) {
   }
 }
 
-function prepareWordSpans(el: HTMLElement) {
-  if (el.querySelector("[data-about-word]")) return;
-  const raw = (el.textContent ?? "").trim();
-  if (!raw) return;
+/** Wraps each word in an inline-block span so it can be revealed individually. */
+function splitWords(el: HTMLElement): HTMLElement[] {
+  const existing = el.querySelectorAll<HTMLElement>("[data-about-word]");
+  if (existing.length) return Array.from(existing);
 
-  const words = raw.split(/\s+/);
+  const raw = (el.textContent ?? "").replace(/\s+/g, " ").trim();
+  if (!raw) return [];
+
   el.textContent = "";
+  const words = raw.split(" ");
+  const spans: HTMLElement[] = [];
 
   words.forEach((word, index) => {
     const span = document.createElement("span");
     span.dataset.aboutWord = "true";
     span.textContent = word;
     span.style.display = "inline-block";
+    span.style.willChange = "transform, opacity, filter";
     el.appendChild(span);
+    spans.push(span);
     if (index < words.length - 1) {
       el.appendChild(document.createTextNode(" "));
     }
   });
+
+  return spans;
 }
 
 export function useAboutSectionAnimations() {
@@ -69,7 +77,7 @@ export function useAboutSectionAnimations() {
     const ctx = gsap.context(() => {
       const hey = section.querySelector<HTMLElement>("[data-about-hey]");
       const year = section.querySelector<HTMLElement>("[data-about-year]");
-      const paragraph = section.querySelector<HTMLElement>("[data-about-word-reveal]");
+      const paragraphs = section.querySelectorAll<HTMLElement>("[data-about-paragraph]");
       const cards = section.querySelectorAll<HTMLElement>("[data-about-stat-card]");
       const counters = section.querySelectorAll<HTMLElement>("[data-about-counter-target]");
       const cta = section.querySelector<HTMLElement>("[data-about-cta]");
@@ -83,15 +91,16 @@ export function useAboutSectionAnimations() {
       const connectorLines = section.querySelectorAll<HTMLElement>('[data-name="line"]');
       const decorNodes = section.querySelectorAll<HTMLElement>('[data-name="decor1"]');
 
+      const lead = section.querySelector<HTMLElement>("[data-about-lead]");
+
       if (year) prepareYearChars(year);
-      if (paragraph) prepareWordSpans(paragraph);
       const yearChars = year?.querySelectorAll<HTMLElement>("[data-about-year-char]") ?? [];
-      const words = paragraph?.querySelectorAll<HTMLElement>("[data-about-word]") ?? [];
 
       if (reduce) {
         if (hey) gsap.set(hey, { autoAlpha: 1, y: 0 });
         if (yearChars.length) gsap.set(yearChars, { autoAlpha: 1, y: 0, filter: "blur(0px)" });
-        if (words.length) gsap.set(words, { autoAlpha: 1 });
+        if (lead) gsap.set(lead, { autoAlpha: 1, y: 0, filter: "blur(0px)" });
+        if (paragraphs.length) gsap.set(paragraphs, { autoAlpha: 1, y: 0, filter: "blur(0px)" });
         if (cards.length) gsap.set(cards, { autoAlpha: 1, y: 0 });
         if (cta) gsap.set(cta, { autoAlpha: 1, x: 0 });
         if (slots) gsap.set(slots, { autoAlpha: 1, x: 0 });
@@ -106,9 +115,18 @@ export function useAboutSectionAnimations() {
         return;
       }
 
+      const leadWords = lead ? splitWords(lead) : [];
+      const bodyWords: HTMLElement[] = [];
+      paragraphs.forEach((paragraph) => {
+        splitWords(paragraph).forEach((word) => bodyWords.push(word));
+      });
+
       if (hey) gsap.set(hey, { autoAlpha: 0, y: 18, filter: "blur(5px)" });
       if (yearChars.length) gsap.set(yearChars, { autoAlpha: 0, y: 12, filter: "blur(5px)" });
-      if (words.length) gsap.set(words, { autoAlpha: 0.32, y: 2, filter: "blur(2.5px)" });
+      if (lead) gsap.set(lead, { autoAlpha: 1 });
+      if (paragraphs.length) gsap.set(paragraphs, { autoAlpha: 1 });
+      if (leadWords.length) gsap.set(leadWords, { autoAlpha: 0, y: 16, filter: "blur(8px)" });
+      if (bodyWords.length) gsap.set(bodyWords, { autoAlpha: 0, y: 10, filter: "blur(4px)" });
       if (cards.length) gsap.set(cards, { autoAlpha: 0, y: 24, filter: "blur(4px)" });
       if (mediaRows.length) gsap.set(mediaRows, { autoAlpha: 0, y: 20, filter: "blur(3px)" });
       if (avatarGroups.length) gsap.set(avatarGroups, { autoAlpha: 0, y: 10, scale: 0.96 });
@@ -160,20 +178,34 @@ export function useAboutSectionAnimations() {
           );
         }
 
-        if (words.length) {
-          words.forEach((word, index) => {
-            tl.to(
-              word,
-              {
-                autoAlpha: 1,
-                y: 0,
-                filter: "blur(0px)",
-                duration: 0.34,
-                ease: MOTION.easeSoft,
-              },
-              0.22 + index * MOTION.wordStagger,
-            );
-          });
+        if (leadWords.length) {
+          tl.to(
+            leadWords,
+            {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.66,
+              stagger: 0.026,
+              ease: MOTION.easePrimary,
+            },
+            0.12,
+          );
+        }
+
+        if (bodyWords.length) {
+          tl.to(
+            bodyWords,
+            {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.5,
+              stagger: 0.009,
+              ease: MOTION.easeSoft,
+            },
+            0.5,
+          );
         }
 
         if (mediaRows.length) {

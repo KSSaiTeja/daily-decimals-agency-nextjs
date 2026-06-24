@@ -10,36 +10,54 @@ export type FooterNavColumn = {
   links: readonly FooterLinkItem[];
 };
 
-export const FOOTER_NAV_COLUMNS = [
+export type FooterSocialIcon = "linkedin" | "instagram" | "facebook" | "behance";
+
+export type FooterSocial = {
+  label: string;
+  href: string;
+  icon: FooterSocialIcon;
+};
+
+export const FOOTER_SOCIALS: FooterSocial[] = [
+  { label: "LinkedIn", href: "https://www.linkedin.com", icon: "linkedin" },
+  // Hidden for now — uncomment to re-enable.
+  // { label: "Instagram", href: "https://www.instagram.com", icon: "instagram" },
+  // { label: "Facebook", href: "https://www.facebook.com", icon: "facebook" },
+  // { label: "Behance", href: "https://www.behance.net", icon: "behance" },
+];
+
+export const FOOTER_BRAND = {
+  tagline: "Outcome-focused growth partner — design, content, and product built to compound.",
+} as const;
+
+export const FOOTER_NAV: readonly FooterNavColumn[] = [
   {
-    title: "Quick Links",
+    title: "Navigate",
     links: [
-      { label: "Our Story", href: "#about", sectionId: "about" },
-      { label: "Our Projects", href: "#testimonials", sectionId: "testimonials" },
-      { label: "What We Offer", href: "#services", sectionId: "services" },
-      { label: "Insights", href: "#" },
+      { label: "How We Work", href: "#about", sectionId: "about" },
+      { label: "Services", href: "#services", sectionId: "services" },
+      { label: "Why Us", href: "#advantages", sectionId: "advantages" },
+      { label: "Approach", href: "#funnel", sectionId: "funnel" },
     ],
   },
   {
-    title: "Connect",
+    title: "Company",
     links: [
-      { label: "Linkedin", href: "https://www.linkedin.com", external: true },
-      { label: "Instagram", href: "https://www.instagram.com", external: true },
-      { label: "FaceBook", href: "https://www.facebook.com", external: true },
-      { label: "Behance", href: "https://www.behance.net", external: true },
+      { label: "Industries", href: "#industries", sectionId: "industries" },
+      { label: "Contact", href: "#contact", sectionId: "contact" },
     ],
   },
-  {
-    title: "Policies",
-    links: [
-      { label: "Data Protection", href: "#" },
-      { label: "User Agreement", href: "#" },
-    ],
-  },
-] as const satisfies readonly FooterNavColumn[];
+];
+
+export const FOOTER_CONTACT = {
+  coffeeLabel: "Let's catch up over a coffee at",
+  cities: "Hyderabad, Bengaluru",
+  contactLabel: "Or contact us",
+  email: "dailydecimals@gmail.com",
+  phones: ["+91 77189 03361", "+91 93904 18860"],
+} as const;
 
 export const FOOTER_COPY = {
-  copyright: "© 2025 Daily Decimals. All rights reserved.",
-  timezoneLabel: "India →",
-  backToTop: "backtotop",
+  copyright:
+    "© All rights reserved with Daily Decimals Designs & Media LLP (GSTIN: 27AAWFD0640F1ZF) 2026.",
 } as const;

@@ -48,7 +48,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "CMO",
     company: "Northwind Collective",
     quote:
-      "Every detail was intentional—from motion to messaging. Our conversion rate climbed without sacrificing brand warmth.",
+      "Every detail was intentional, from motion to messaging. Our conversion rate climbed without sacrificing brand warmth.",
     context:
       "Northwind wanted a cohesive digital experience across product pages and campaigns. The new system paid for itself in six weeks.",
     initials: "EV",
@@ -72,7 +72,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "Partner",
     company: "Arch & Co.",
     quote:
-      "Refined, confident, and human—the exact tone we needed. Clients mention the website before they mention our fees.",
+      "Refined, confident, and human: the exact tone we needed. Clients mention the website before they mention our fees.",
     context:
       "Arch & Co. repositioned toward high-touch residential projects. The refreshed identity aligned every touchpoint with that shift.",
     initials: "SL",

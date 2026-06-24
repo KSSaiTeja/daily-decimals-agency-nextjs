@@ -42,7 +42,15 @@ export function initPageScrollStability() {
   ];
 
   let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  let lastWidth = window.innerWidth;
   const onViewportChange = () => {
+    // Mobile browsers fire `resize` when the address bar shows/hides — a
+    // height-only change. Refreshing then re-measures pinned sections and can
+    // snap the scroll position, so only refresh on real width changes.
+    const width = window.innerWidth;
+    if (width === lastWidth) return;
+    lastWidth = width;
+
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       refreshScrollTriggersAfterLayout();

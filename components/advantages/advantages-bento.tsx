@@ -1,28 +1,18 @@
 "use client";
 
 import { AdvantagesPhotoCollage } from "@/components/advantages/advantages-photo-collage";
-import { ADVANTAGES_EXPERTISE, ADVANTAGES_PORTFOLIO } from "@/components/advantages/data";
-import { SvgPath } from "@/components/icons/svg-path";
 import {
-  iconAccent14,
-  iconAccent15,
-  innovationVisual,
-  interiorShowcase,
-  logoPlaceholder,
-  logoPrimary,
-  logoSecondary,
-  personaBlur,
-  personaSharp,
-  productDetail,
-} from "@/lib/images";
-
-function AdvantagesTextScrim({ className = "" }: { className?: string }) {
-  return <div className={`advantages-card__text-scrim ${className}`.trim()} aria-hidden />;
-}
+  ADVANTAGES_EXPERTISE,
+  ADVANTAGES_PASTEL_CARDS,
+  ADVANTAGES_PORTFOLIO,
+  type AdvantagePastelCard,
+} from "@/components/advantages/data";
+import { SvgPath } from "@/components/icons/svg-path";
+import { logoPrimary } from "@/lib/images";
 
 function ExpertiseCard() {
   return (
-    <article className="advantages-card advantages-card--expertise">
+    <article className="advantages-card advantages-card--expertise" data-advantages-card>
       <div className="advantages-card__expertise-top">
         <p className="type-label-sm">{ADVANTAGES_EXPERTISE.leftLabel}</p>
         <div className="advantages-card__logo-mark">
@@ -42,59 +32,22 @@ function ExpertiseCard() {
   );
 }
 
-function DesignCard() {
+function PastelCard({ variant, title, image, imageAlt, compact }: AdvantagePastelCard) {
   return (
-    <article className="advantages-card advantages-card--design">
-      <div className="advantages-card__media" data-advantages-image>
-        <img alt="" className="advantages-card__media-image" src={interiorShowcase} />
+    <article
+      className={`advantages-card advantages-card--pastel advantages-card--${variant}${
+        compact ? " advantages-card--pastel-compact" : ""
+      }`}
+      data-advantages-card
+    >
+      <div className="advantages-card__pastel-copy" data-advantages-word-group>
+        <h3 className="advantages-card__pastel-title">{title.join(" ")}</h3>
       </div>
 
-      <AdvantagesTextScrim />
-
-      <div
-        className="advantages-card__copy advantages-card__copy--overlay"
-        data-advantages-word-group="first-split"
-      >
-        <h3 className="type-title text-white">
-          <span className="block">Unique Design</span>
-          <span className="block">Aestetic</span>
-        </h3>
-      </div>
-    </article>
-  );
-}
-
-function BrandCard() {
-  return (
-    <article className="advantages-card advantages-card--brand">
-      <div className="advantages-card__media" data-advantages-image>
-        <img alt="" className="advantages-card__media-image" src={logoPlaceholder} />
-        <div className="advantages-card__media-scrim advantages-card__media-scrim--dark" />
-      </div>
-      <img alt="" className="advantages-card__brand-logo" src={logoSecondary} />
-    </article>
-  );
-}
-
-function InnovativeCard() {
-  return (
-    <article className="advantages-card advantages-card--innovative">
-      <div className="advantages-card__media" data-advantages-image>
-        <img alt="" className="advantages-card__media-image" src={innovationVisual} />
-      </div>
-
-      <AdvantagesTextScrim className="advantages-card__text-scrim--compact" />
-
-      <div className="advantages-card__innovative-pattern" aria-hidden>
-        <img alt="" className="advantages-card__innovative-ring" src={iconAccent15} />
-        <div className="advantages-card__innovative-badge">
-          <img alt="" className="advantages-card__innovative-badge-bg" src={iconAccent14} />
-          <p className="advantages-card__innovative-badge-label">Solutions</p>
+      <div className="advantages-card__pastel-photo" data-advantages-image>
+        <div className="advantages-card__pastel-frame">
+          <img alt={imageAlt} className="advantages-card__pastel-image" src={image} />
         </div>
-      </div>
-
-      <div className="advantages-card__copy advantages-card__copy--center" data-advantages-word-group>
-        <p className="advantages-card__innovative-title">Innovative</p>
       </div>
     </article>
   );
@@ -102,7 +55,7 @@ function InnovativeCard() {
 
 function PortfolioCard() {
   return (
-    <article className="advantages-card advantages-card--portfolio">
+    <article className="advantages-card advantages-card--portfolio" data-advantages-card>
       <div className="advantages-card__portfolio-top">
         <div className="advantages-card__portfolio-stat">
           <p className="advantages-card__portfolio-count">{ADVANTAGES_PORTFOLIO.projectCount}</p>
@@ -144,18 +97,10 @@ function PortfolioCard() {
             </p>
           </div>
         </div>
-      </div>
 
-      <AdvantagesTextScrim className="advantages-card__text-scrim--portfolio" />
-
-      <div className="advantages-card__portfolio-bottom">
         <div data-advantages-word-group>
-          <h3 className="type-title text-white">
-            {ADVANTAGES_PORTFOLIO.title.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
+          <h3 className="type-title advantages-card__portfolio-title">
+            {ADVANTAGES_PORTFOLIO.title.join(" ")}
           </h3>
         </div>
       </div>
@@ -165,64 +110,28 @@ function PortfolioCard() {
   );
 }
 
-function ClientCard() {
-  return (
-    <article className="advantages-card advantages-card--client">
-      <div className="advantages-card__client-backdrop" data-advantages-image>
-        <img alt="" className="advantages-card__media-image" src={personaBlur} />
-      </div>
-
-      <div className="advantages-card__client-portrait">
-        <img alt="" className="advantages-card__client-portrait-image" src={personaSharp} />
-      </div>
-
-      <AdvantagesTextScrim />
-
-      <div className="advantages-card__copy advantages-card__copy--center" data-advantages-word-group>
-        <p className="advantages-card__client-line">Client-oriented</p>
-        <p className="advantages-card__client-line advantages-card__client-line--accent">Approach</p>
-      </div>
-    </article>
-  );
-}
-
-function DetailCard() {
-  return (
-    <article className="advantages-card advantages-card--detail">
-      <div className="advantages-card__media" data-advantages-image>
-        <img alt="" className="advantages-card__media-image" src={productDetail} />
-      </div>
-
-      <AdvantagesTextScrim />
-
-      <div className="advantages-card__detail-content">
-        <svg className="advantages-card__detail-star" viewBox="0 0 23 23" fill="none" aria-hidden>
-          <SvgPath name="scrollCueChevron" fill="white" opacity={0.9} />
-        </svg>
-
-        <div data-advantages-word-group>
-          <h3 className="type-title text-white">
-            <span className="block">Serious Attention</span>
-            <span className="block">to Detail</span>
-          </h3>
-        </div>
-      </div>
-    </article>
-  );
+function pastelCard(variant: AdvantagePastelCard["variant"]) {
+  return ADVANTAGES_PASTEL_CARDS.find((card) => card.variant === variant);
 }
 
 export function AdvantagesBento() {
+  const design = pastelCard("design");
+  const brand = pastelCard("brand");
+  const innovative = pastelCard("innovative");
+  const client = pastelCard("client");
+  const detail = pastelCard("detail");
+
   return (
     <div className="advantages-bento" data-advantages-bento>
       <ExpertiseCard />
-      <DesignCard />
+      {design ? <PastelCard {...design} /> : null}
       <div className="advantages-bento__stack">
-        <BrandCard />
-        <InnovativeCard />
+        {brand ? <PastelCard {...brand} /> : null}
+        {innovative ? <PastelCard {...innovative} /> : null}
       </div>
       <PortfolioCard />
-      <ClientCard />
-      <DetailCard />
+      {client ? <PastelCard {...client} /> : null}
+      {detail ? <PastelCard {...detail} /> : null}
     </div>
   );
 }

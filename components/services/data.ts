@@ -1,63 +1,82 @@
 export const SERVICE_TABS = [
   "Strategy",
-  "Design",
+  "Design & Tech",
   "Content",
-  "Performance",
   "Product",
-  "Media",
+  "Performance",
+  "Media & Channels",
 ] as const;
 
 export type ServiceTabLabel = (typeof SERVICE_TABS)[number];
 
 export type ServiceContent = {
   label: ServiceTabLabel;
-  description: [string, string];
-  tags: [string, string, string];
+  description: readonly string[];
+  tags: readonly string[];
   backgroundPhrase: string;
 };
 
-export const SERVICES_EYEBROW = "(Services)";
+export const SERVICES_EYEBROW = "( What We Do )";
 
 export const SERVICES_HEADING = {
-  titleLead: "What we",
-  titleEmphasis: "do",
+  titleLead: "Services we",
+  titleEmphasis: "offer",
+  subtitle: "Capabilities powering every stage.",
 } as const;
 
 export const SERVICES_CONTENT: Record<ServiceTabLabel, ServiceContent> = {
   Strategy: {
     label: "Strategy",
-    description: ["Go-to-market, pricing strategy,", "positioning and growth planning"],
-    tags: ["Go-to-market", "Pricing strategy", "Growth planning"],
+    description: [
+      "From business consulting, brand playbooks, budgets & ROI projections, product strategy, revenue engine, communication strategy and growth roadmaps",
+      "to customer lifetime value maximization.",
+    ],
+    tags: ["Go-to-Market", "Pricing", "Growth", "Communication", "Funnel Strategy"],
     backgroundPhrase: "Strategy",
   },
-  Design: {
-    label: "Design",
-    description: ["Brand & visual systems,", "UI/UX & product design"],
-    tags: ["Brand & visual systems", "UI/UX", "Product design"],
+  "Design & Tech": {
+    label: "Design & Tech",
+    description: [
+      "Designing and developing websites, micro-sites, landing pages, booking sites, AI-catalogs, app screens,",
+      "social media posts, email templates and ad creatives.",
+    ],
+    tags: ["Website", "Apps", "Ads", "Emails"],
     backgroundPhrase: "Design",
   },
   Content: {
     label: "Content",
-    description: ["Content strategy, copywriting", "& storytelling"],
-    tags: ["Content strategy", "Copywriting", "Storytelling"],
+    description: [
+      "From content writing to copywriting: blogs, posts, reels, videos, app & website UX, ad copy,",
+      "WhatsApp notifications, email copy, push notifications and pitch-decks.",
+    ],
+    tags: ["SEO & AEO", "Blogs", "Social Media", "Emails", "Decks", "Brochures"],
     backgroundPhrase: "Content",
-  },
-  Performance: {
-    label: "Performance",
-    description: ["Paid media, growth marketing", "& optimization"],
-    tags: ["Paid media", "Growth marketing", "Optimization"],
-    backgroundPhrase: "Performance",
   },
   Product: {
     label: "Product",
-    description: ["Product strategy, experience", "& experimentation"],
-    tags: ["Product strategy", "Experience", "Experimentation"],
+    description: [
+      "Creating 360° touchpoints for customer onboarding, conversion, purchase, upsell, retention and loyalty",
+      "through drip campaigns and product-led growth.",
+    ],
+    tags: ["Product Led Growth", "App Flow", "Customer Journeys", "Engagement", "Retention"],
     backgroundPhrase: "Product",
   },
-  Media: {
-    label: "Media",
-    description: ["Audience & channel management", "across digital & offline"],
-    tags: ["Audience management", "Channel management", "Digital & offline"],
+  Performance: {
+    label: "Performance",
+    description: [
+      "Driving brand impressions, website traffic, quality leads, app downloads and customer purchases",
+      "by planning & executing digital performance ads.",
+    ],
+    tags: ["Google Ads", "Meta Ads", "Downloads", "Lead Generation"],
+    backgroundPhrase: "Performance",
+  },
+  "Media & Channels": {
+    label: "Media & Channels",
+    description: [
+      "Omni-channel marketing spanning digital to offline: managing assets, negotiating partnerships and making you visible to target customers,",
+      "tapping into streaming platforms, influencer marketing, rewards platforms and offline events.",
+    ],
+    tags: ["LinkedIn", "Instagram", "Outdoor Media", "Events", "Strategic Partnerships"],
     backgroundPhrase: "Media",
   },
 };

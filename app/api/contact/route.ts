@@ -1,8 +1,12 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 
 type ContactPayload = {
   name?: string;
   email?: string;
+  countryCode?: string;
+  mobile?: string;
+  company?: string;
+  designation?: string;
   message?: string;
 };
 
@@ -15,11 +19,15 @@ export async function POST(request: Request) {
     const body = (await request.json()) as ContactPayload;
     const name = String(body.name ?? "").trim();
     const email = String(body.email ?? "").trim();
+    const countryCode = String(body.countryCode ?? "").trim();
+    const mobile = String(body.mobile ?? "").trim();
+    const company = String(body.company ?? "").trim();
+    const designation = String(body.designation ?? "").trim();
     const message = String(body.message ?? "").trim();
 
-    if (!name || !email || !message) {
+    if (!name || !email || !mobile || !message) {
       return NextResponse.json(
-        { error: "Please fill all the fields before submitting." },
+        { error: "Please fill all the required fields before submitting." },
         { status: 400 },
       );
     }
@@ -31,29 +39,38 @@ export async function POST(request: Request) {
       );
     }
 
-    const webhookUrl = process.env.CONTACT_DISCORD_WEBHOOK_URL?.trim();
+    const sheetsUrl = process.env.CONTACT_GOOGLE_SHEETS_URL?.trim();
 
-    if (webhookUrl) {
-      const webhookResponse = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          content: [
-            "**New enquiry: Daily Decimals**",
-            `**Name:** ${name}`,
-            `**Email:** ${email}`,
-            `**Message:**`,
-            message,
-          ].join("\n"),
-        }),
-      });
-
-      if (webhookResponse.ok) {
-        return NextResponse.json({ ok: true, delivered: true });
-      }
+    if (!sheetsUrl) {
+      // No destination configured — let the UI fall back to a mail draft.
+      return NextResponse.json({ ok: true, delivered: false });
     }
 
-    return NextResponse.json({ ok: true, delivered: false });
+    // Apps Script Web Apps are slow (cold start + redirect). Write the row in the
+    // background so the user gets an instant success response.
+    after(async () => {
+      try {
+        await fetch(sheetsUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: process.env.CONTACT_GOOGLE_SHEETS_TOKEN ?? "",
+            name,
+            email,
+            phone: `${countryCode} ${mobile}`.trim(),
+            countryCode,
+            mobile,
+            company,
+            designation,
+            message,
+          }),
+        });
+      } catch (err) {
+        console.error("Failed to write contact submission to Google Sheets", err);
+      }
+    });
+
+    return NextResponse.json({ ok: true, delivered: true });
   } catch {
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },

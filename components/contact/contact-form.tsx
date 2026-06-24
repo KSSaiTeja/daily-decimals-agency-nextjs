@@ -191,7 +191,7 @@ export function ContactForm({ className = "" }: ContactFormProps) {
           <select
             value={form.countryCode}
             onChange={(event) => updateField("countryCode", event.target.value)}
-            className={`${FIELD_CLASS} w-auto shrink-0 pr-6 [&>option]:text-black`}
+            className={`${FIELD_CLASS} w-auto! shrink-0 pr-6 [&>option]:text-black`}
             name="countryCode"
             aria-label="Country code"
           >
@@ -205,7 +205,7 @@ export function ContactForm({ className = "" }: ContactFormProps) {
             type="tel"
             value={form.mobile}
             onChange={(event) => updateField("mobile", event.target.value)}
-            className={`${FIELD_CLASS} flex-1`}
+            className={`${FIELD_CLASS} w-auto! min-w-0 flex-1`}
             placeholder="Enter your Mobile Number"
             autoComplete="tel"
             name="mobile"

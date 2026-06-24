@@ -36,7 +36,7 @@ export const CONTACT_SUBMITTING_LABEL = "Sending your note…";
  * Portfolio demo — skips the API and always shows the success state after a valid submit.
  * Set to `false` when wiring a live inbox or webhook.
  */
-export const CONTACT_DEMO_SUCCESS = true;
+export const CONTACT_DEMO_SUCCESS = false;
 
 export const CONTACT_SUCCESS = {
   eyebrow: "You're in good hands",
